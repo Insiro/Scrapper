@@ -1,8 +1,8 @@
-from playwright.sync_api import sync_playwright
-
 from bs4 import BeautifulSoup
+from playwright.async_api import async_playwright
 
-IMAGE_EXTENSIONS = ('.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg')
+IMAGE_EXTENSIONS = (".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg")
+
 
 # 네트워크 요청을 필터링하는 함수
 def filter_requests(route, request):
@@ -12,18 +12,20 @@ def filter_requests(route, request):
     else:
         route.continue_()  # 나머지 요청은 계속 진행
 
-def loadSoup(url):
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False, slow_mo=0,args=['--disable-software-rasterizer'])
-        context = browser.new_context()
-        page = context.new_page()
-        page.route('**/*', filter_requests)
 
-        page.goto(url)
-        page.wait_for_load_state("networkidle")
+async def loadSoup(url):
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(
+            headless=False, slow_mo=0, args=["--disable-software-rasterizer"]
+        )
+        context = await browser.new_context()
+        page = await context.new_page()
+        page.route("**/*", filter_requests)
 
-        content = page.content()
-        print(content)
+        await page.goto(url)
+        await page.wait_for_load_state("networkidle")
+
+        content = await page.content()
         soup = BeautifulSoup(content)
         browser.close()
         return soup

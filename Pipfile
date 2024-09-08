@@ -9,8 +9,14 @@ beautifulsoup4 = "*"
 pillow = "*"
 fastapi = "*"
 pydantic = "*"
+sqlalchemy = "*"
+python-dotenv = "*"
 
 [dev-packages]
+types-requests = "*"
+mypy = "*"
+types-beautifulsoup4 = "*"
+sqlalchemy-stubs = "*"
 
 [requires]
 python_version = "3.12"
