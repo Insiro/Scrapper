@@ -30,6 +30,7 @@ class TwitterDownloader(AbsDownloader):
             author_name=name,
             author_tag=tag,
             url=url,
+            source="twitter",
             image_names=fname_list,
             content=content.get_text(),
         )

@@ -15,6 +15,7 @@ class ScrapRepository:
             url=scrap_data.url,
             author_name=scrap_data.author_name,
             author_tag=scrap_data.author_tag,
+            source=scrap_data.source,
         )
         self.db.add(db_scrap)
         self.db.commit()
@@ -34,6 +35,8 @@ class ScrapRepository:
             scrap.author_tag = scrap_data.author_tag
         if scrap_data.content is not None:
             scrap.content = scrap_data.content
+        if scrap_data.comment is not None:
+            scrap.comment = scrap_data.comment
 
         self.db.commit()
         self.db.refresh(scrap)

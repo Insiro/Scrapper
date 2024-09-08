@@ -14,10 +14,12 @@ class Scrap(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     url = Column(String, unique=True, index=True)
+    source = Column(String)
     content = Column(Text, nullable=True)
     author_name = Column(String)
     author_tag = Column(String)
     images: Mapped[List["Image"]] = relationship("Image", back_populates="scrap", uselist=True)
+    comment = Column(String, nullable=True)
 
     def __repr__(self):
         return f"<Scrap(id={self.id}, url={self.url}, author_info={self.author_name}@{self.author_tag})>"

@@ -15,6 +15,7 @@ class ScrapCreate(BaseModel):
     content: str
     author_name: str
     author_tag: str
+    source: str
     image_names: List[str]
 
 
@@ -23,6 +24,7 @@ class ScrapUpdate(BaseModel):
     author_name: str
     author_tag: str
     delete_images: list[int]
+    comment: Optional[str]
 
 
 class ScrapResponse(BaseModel):
