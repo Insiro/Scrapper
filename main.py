@@ -1,4 +1,4 @@
-from os import makedirs
+from os import makedirs, path
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,25 +15,25 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # React 앱의 URL
+    allow_origins=["http://localhost:5173"],  # React_vite URL for Test
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-
+base_url = config.base_url
 
 # Create the database tables
 Base.metadata.create_all(bind=engine)
 
 # Include the router
-app.mount("/media", StaticFiles(directory=config.media), name="media")
-app.include_router(router, prefix="/api")
+app.mount(path.join(base_url, "/media"), StaticFiles(directory=config.media), name="media")
+app.include_router(router, prefix=path.join(base_url,"/api"))
 
 
 @app.get("/")
 def root():
-    return {"message": "downloader server"}
+    return {"message": "Scraper server"}
 
 
-print("downloader start!!")
+print("SCRAPER start!!")

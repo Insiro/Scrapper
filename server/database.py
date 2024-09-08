@@ -1,22 +1,15 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-
 from .utils.config import config
 
-# SQLite URL
+engine = create_engine(config.db_url, connect_args={"check_same_thread": False} if config.db_driver == "sqlite" else {})
 
-# Create engine
-engine = create_engine(config.db_url, connect_args={"check_same_thread": False})
-
-# Create a configured "Session" class
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Create a base class
 Base = declarative_base()
 
-
-# Dependency to get the database session
+# 데이터베이스 세션 종속성 정의
 def get_db():
     db = SessionLocal()
     try:
