@@ -47,7 +47,7 @@ class ScrapAPIController:
 
     async def list_scraps(self, skip: int = 0, limit: int = 10):
         scraps = self.repo.get_scraps(skip=skip, limit=limit)
-        return scraps
+        return [ScrapResponse.fromScrap(scrap) for scrap in scraps]
 
     async def delete_scrap(self, scrap_id: int):
         if (scrap := self.repo.delete_scrap(scrap_id)) is None:
@@ -75,17 +75,10 @@ class ScrapAPIController:
         return scrap
 
     async def get_scrap_details(self, scrap_id: int):
-        if (scrap := self.repo.delete_scrap(scrap_id)) is None:
+        if (scrap := self.repo.get_scrap(scrap_id)) is None:
             raise HTTPException(status_code=404, detail="Scrap not found")
 
-        return {
-            "id": scrap.id,
-            "url": scrap.url,
-            "content": scrap.content,
-            "author_name": scrap.author_name,
-            "author_tag": scrap.author_tag,
-            "image_paths": [image.path for image in scrap.images],
-        }
+        return ScrapResponse.fromScrap(scrap)
 
 
 # Dependency

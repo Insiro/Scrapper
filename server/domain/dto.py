@@ -33,6 +33,7 @@ class ScrapResponse(BaseModel):
     content: Optional[str]
     author_name: str
     author_tag: str
+    comment:Optional[str]
     image_names: List[str]
 
     @staticmethod
@@ -41,6 +42,7 @@ class ScrapResponse(BaseModel):
             id=scrap.id,
             url=scrap.url,
             content=scrap.content,
+            comment = scrap.comment,
             author_name=scrap.author_name,
             author_tag=scrap.author_tag,
             image_names=[image.file_name for image in scrap.images],

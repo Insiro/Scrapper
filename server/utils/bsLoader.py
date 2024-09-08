@@ -18,7 +18,7 @@ async def load_soup(url):
         browser = await p.chromium.launch(headless=False, slow_mo=0, args=["--disable-software-rasterizer"])
         context = await browser.new_context()
         page = await context.new_page()
-        await page.route("**/*", filter_requests)
+        page.route("**/*", filter_requests)
 
         await page.goto(url)
         await page.wait_for_load_state("networkidle")
