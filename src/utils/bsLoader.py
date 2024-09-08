@@ -13,11 +13,9 @@ def filter_requests(route, request):
         route.continue_()  # 나머지 요청은 계속 진행
 
 
-async def loadSoup(url):
+async def load_soup(url):
     async with async_playwright() as p:
-        browser = await p.chromium.launch(
-            headless=False, slow_mo=0, args=["--disable-software-rasterizer"]
-        )
+        browser = await p.chromium.launch(headless=False, slow_mo=0, args=["--disable-software-rasterizer"])
         context = await browser.new_context()
         page = await context.new_page()
         page.route("**/*", filter_requests)

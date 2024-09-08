@@ -2,7 +2,7 @@ from urllib.parse import urlsplit, urlunsplit
 from uuid import uuid4
 
 from src.domain.dto import ScrapCreate
-from src.utils.bsLoader import loadSoup
+from src.utils.bsLoader import load_soup
 from src.utils.saveImg import download_image
 
 from .AbsDownloader import AbsDownloader
@@ -12,7 +12,7 @@ class TwitterDownloader(AbsDownloader):
     async def scrap(self, url):
         split_url = urlsplit(url)
         url = urlunsplit((split_url.scheme, split_url.netloc, split_url.path, "", split_url.fragment))
-        soup = await loadSoup(url)
+        soup = await load_soup(url)
         article = soup.find("article")
         author = article.find("div", {"data-testid": "User-Name"}).find_all("a")
         content = article.find("div").find("div").find_all("div", recursive=False)[2]
