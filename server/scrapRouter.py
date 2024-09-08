@@ -2,9 +2,8 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 
-from .domain.dto import ScrapResponse, ScrapUpdate
-from .scrapController import (ScrapAPIController, URLInput,
-                              get_scrap_api_controller)
+from .domain.dto import ImageDelete, ScrapResponse, ScrapUpdate
+from .scrapController import ScrapAPIController, URLInput, get_scrap_api_controller
 
 router = APIRouter()
 
@@ -41,6 +40,16 @@ async def update_script(
     return await controller.update_scrap(scrap_id, update_scrap)
 
 
+@router.post("/scraps/{scrap_id}", response_model=ScrapResponse)
+async def re_scrap(scrap_id: int, controller: ScrapAPIController = Depends(get_scrap_api_controller)):
+    return await controller.re_scrap(scrap_id)
+
+
 @router.get("/scraps/{scrap_id}", response_model=ScrapResponse)
 async def get_scrap_details(scrap_id: int, controller: ScrapAPIController = Depends(get_scrap_api_controller)):
     return await controller.get_scrap_details(scrap_id)
+
+
+@router.delete("/images")
+async def delete_images(input: ImageDelete, controller: ScrapAPIController = Depends(get_scrap_api_controller)):
+    return await controller.delete_images(input)

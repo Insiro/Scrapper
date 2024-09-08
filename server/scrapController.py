@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from .database import get_db
-from .domain.dto import ScrapResponse, ScrapUpdate, URLInput
+from .domain.dto import ImageDelete, ScrapResponse, ScrapUpdate, URLInput
 from .downloader import Scrapper  # Scrapper 클래스 임포트
 from .repository import *
 from .utils.config import Config
@@ -35,14 +35,25 @@ class ScrapAPIController:
         url = scrapper.preprocess_url(url_input.url)
 
         if (existing_scrap := self.repo.get_scrap_by_url(url)) is not None:
-            if not url_input.force:
-                return ScrapResponse.fromScrap(existing_scrap)
-            existing_scrap.images
-            # If scrap exists and force is False, return existing scrap
+            return ScrapResponse.fromScrap(existing_scrap)
 
         # Scrapper를 사용하여 데이터 가져오기
         data = await scrapper.scrap(url)
         scrap = self.repo.create_scrap(data)
+        self.img_repo.save_images(data.image_names, scrap.id)
+
+        return ScrapResponse.fromScrap(scrap)
+
+    async def re_scrap(self, scrap_id: int):
+        existing_scrap = self.repo.get_scrap(scrap_id)
+        scrapper = self.scrapper.getInstance(type=existing_scrap.source)
+        url = scrapper.preprocess_url(existing_scrap.url)
+        data = await scrapper.scrap(url)
+        scrap = self.repo.update_scrap(existing_scrap, data)
+
+        self.img_repo.delete_images_by_scrap(scrap.id)
+        self.img_repo.save_images(data.image_names, scrap.id)
+
         return ScrapResponse.fromScrap(scrap)
 
     async def list_scraps(self, skip: int = 0, limit: int = 10):
@@ -57,20 +68,12 @@ class ScrapAPIController:
 
         return scrap
 
-    async def save_scrap(self, scrap_id: int, folder_path: str):
-        if (scrap := self.repo.get_scrap(scrap_id)) is None:
-            raise HTTPException(status_code=404, detail="Scrap not found")
-
-        self.img_repo.save_images()
-
-        return {"message": "Scrap saved successfully"}
-
     async def update_scrap(self, scrap_id: int, update_scrap: ScrapUpdate):
         if (scrap := self.repo.get_scrap(scrap_id)) is None:
             raise HTTPException(status_code=404, detail="Scrap not found")
 
         scrap = self.repo.update(scrap, update_scrap)
-        self.img_repo.delete_images(update_scrap.delete_images)
+        self.img_repo.delete_images(*update_scrap.delete_images)
 
         return scrap
 
@@ -79,6 +82,16 @@ class ScrapAPIController:
             raise HTTPException(status_code=404, detail="Scrap not found")
 
         return ScrapResponse.fromScrap(scrap)
+
+    async def delete_image(self, image_id: int):
+        if (images := self.img_repo.get_image(image_id)) is None:
+            raise HTTPException(status_code=404, detail="Image not found")
+        return images
+
+    async def delete_images(self, delete_image: ImageDelete):
+        result = self.img_repo.delete_images(*delete_image.images)
+
+        return result
 
 
 # Dependency

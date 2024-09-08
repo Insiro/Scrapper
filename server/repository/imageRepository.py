@@ -32,18 +32,19 @@ class ImageRepository:
         """
         파일 목록을 삭제합니다.
 
-        :param file_paths: 삭제할 파일의 경로 목록
+        :param image_id: 이미지의 아이디
         """
-        images = self.db.query(Image).filter(Image.id in image_id)
+        images = self.db.query(Image).filter(Image.id.in_(image_id)).all()
 
         for img in images:
-            file = path.join(self.storage_path, img.file_name)
+            file = path.join(self.media_path, img.file_name)
             if path.exists(file):
                 remove(file)
                 # 데이터베이스에서 파일 정보를 삭제합니다.
 
-        self.db.query(Image).filter(Image.id in image_id).delete()
+        self.db.query(Image).filter(Image.id.in_(image_id)).delete()
         self.db.commit()
+        return True
 
     def delete_images_by_scrap(self, scrap_id: int) -> None:
         """
@@ -53,14 +54,15 @@ class ImageRepository:
         """
         images = self.db.query(Image).filter(Image.scrap_id == scrap_id).all()
         for image in images:
-            file = path.join(self.storage_path, image.file_name)
+            file = path.join(self.media_path, image.file_name)
             if path.exists(file):
                 remove(file)
 
         image_ids = [img.id for img in images]
 
-        self.db.query(Image).filter(Image.id in image_ids).delete()
+        self.db.query(Image).filter(Image.id.in_(image_ids)).delete()
         self.db.commit()
+        return True
 
     def export_and_delete(self, image_list: List[Image]) -> None:
         """
@@ -77,5 +79,9 @@ class ImageRepository:
 
         image_ids = [img.id for img in image_list]
 
-        self.db.query(Image).filter(Image.id in image_ids).delete()
+        self.db.query(Image).filter(Image.id.in_(image_ids)).delete()
         self.db.commit()
+
+    def get_image(self, image_name_list) -> list[Image]:
+        images = self.db.query(Image).filter(Image.file_name.in_(image_name_list))
+        return images

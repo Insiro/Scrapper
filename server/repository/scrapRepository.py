@@ -3,7 +3,7 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 
 from ..domain.dto import ScrapCreate, ScrapUpdate
-from ..domain.entity import Image, Scrap
+from ..domain.entity import Scrap
 
 
 class ScrapRepository:
@@ -21,14 +21,10 @@ class ScrapRepository:
         self.db.commit()
         self.db.refresh(db_scrap)
 
-        for file_name in scrap_data.image_names:
-            db_image = Image(file_name=file_name, scrap_id=db_scrap.id)
-            self.db.add(db_image)
-
         self.db.commit()
         return db_scrap
 
-    def update_script(self, scrap: Scrap, scrap_data: ScrapUpdate) -> Scrap:
+    def update_scrap(self, scrap: Scrap, scrap_data: ScrapUpdate) -> Scrap:
         if scrap_data.author_name is not None:
             scrap.author_name = scrap_data.author_name
         if scrap_data.author_tag is not None:

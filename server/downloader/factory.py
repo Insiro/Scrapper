@@ -3,7 +3,7 @@ from .twitter import TwitterDownloader
 
 
 class Scrapper(AbsDownloader):
-    def getInstance(self, url: str) -> AbsDownloader:
+    def getInstance(self, url: str = None, type: str = None) -> AbsDownloader:
         return TwitterDownloader()
 
     def scrap(self, url):

@@ -7,7 +7,6 @@ from .entity import Scrap
 
 class URLInput(BaseModel):
     url: str
-    force: bool = False
 
 
 class ScrapCreate(BaseModel):
@@ -16,6 +15,7 @@ class ScrapCreate(BaseModel):
     author_name: str
     author_tag: str
     source: str
+    comment: str = None
     image_names: List[str]
 
 
@@ -24,7 +24,17 @@ class ScrapUpdate(BaseModel):
     author_name: str
     author_tag: str
     delete_images: list[int]
+    new_images: list[int]
     comment: Optional[str]
+
+
+class ImageDelete(BaseModel):
+    images: List[int]
+
+
+class ImageResponse(BaseModel):
+    id: int
+    file_name: str
 
 
 class ScrapResponse(BaseModel):
@@ -33,8 +43,8 @@ class ScrapResponse(BaseModel):
     content: Optional[str]
     author_name: str
     author_tag: str
-    comment:Optional[str]
-    image_names: List[str]
+    comment: Optional[str]
+    images: List[ImageResponse]
 
     @staticmethod
     def fromScrap(scrap: Scrap):
@@ -42,8 +52,8 @@ class ScrapResponse(BaseModel):
             id=scrap.id,
             url=scrap.url,
             content=scrap.content,
-            comment = scrap.comment,
+            comment=scrap.comment,
             author_name=scrap.author_name,
             author_tag=scrap.author_tag,
-            image_names=[image.file_name for image in scrap.images],
+            images=[ImageResponse(id=image.id, file_name=image.file_name) for image in scrap.images],
         )
