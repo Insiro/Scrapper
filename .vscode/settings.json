@@ -4,6 +4,7 @@
         "fastapi",
         "pydantic",
         "sqlalchemy",
+        "tseslint",
         "uselist"
     ]
 }
