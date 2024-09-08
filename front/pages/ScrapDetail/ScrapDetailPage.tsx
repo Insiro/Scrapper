@@ -1,15 +1,16 @@
-import { useLoaderData } from "react-router-dom";
-import ScrapDetail from "../../components/ScrapDetail";
-import { Scrap } from "../../types";
+import { useEffect } from "react";
+import { useLoaderData, useOutletContext } from "react-router-dom";
+
+import ScrapDetail from "../../widgets/ScrapDetail";
+import { LayoutContextType } from "../../entities/title/lib/layoutContext";
+import { Scrap } from "../../entities/scrap/Scrap";
 
 const ScrapDetailPage: React.FC = () => {
     const scrap = useLoaderData() as Scrap; // useLoaderData로 로드된 데이터를 가져옵니다.
-    console.log(scrap);
+    const { setPageTitle } = useOutletContext<LayoutContextType>();
 
-    return (
-        <div style={{ padding: "2rem" }}>
-            <ScrapDetail scrap={scrap} /> {/* ScrapDetail 컴포넌트에 로드된 데이터를 전달 */}
-        </div>
-    );
+    useEffect(() => setPageTitle("Scrap Detail"), [setPageTitle]); // 페이지가 로드될 때 제목 설정
+
+    return <ScrapDetail scrap={scrap} />;
 };
 export default ScrapDetailPage;

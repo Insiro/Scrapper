@@ -1,20 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLoaderData } from "react-router-dom";
-import ScrapForm from "../../components/ScrapForm";
-import ScrapList from "../../components/ScrapList";
-import { Scrap } from "../../types";
+
+import ScrapForm from "../../widgets/ScrapForm";
+import ScrapList from "../../widgets/ScrapList";
+import { useLayoutContext } from "../../entities/title/lib/useLayoutContext";
+import { Scrap } from "../../entities/scrap/Scrap";
 
 const HomePage: React.FC = () => {
-    const scraps = useLoaderData() as Scrap[];
+    const { setPageTitle } = useLayoutContext(); // LayoutContext에서 상태 업데이트 함수 가져오기
 
-    const handleScrapAdd = (newScrap: Scrap) => {
-        // 상태 관리를 통해 새로운 스크랩을 목록에 추가할 수 있습니다.
-        console.log(newScrap);
-    };
+    useEffect(() => {
+        setPageTitle("Scrap List");
+    }, [setPageTitle]); // 페이지가 로드될 때 제목 설정
+
+    // 초기 스크랩 데이터를 로드
+    const initialScraps = useLoaderData() as Scrap[];
+
+    // 스크랩 목록 상태 관리
+    const [scraps, setScraps] = useState<Scrap[]>(initialScraps);
+
+    const handleScrapAdd = (newScrap: Scrap) => setScraps((prevScraps) => [newScrap, ...prevScraps]);
 
     return (
-        <div style={{ padding: "2rem" }}>
-            <h1>Scrap List</h1>
+        <div>
             <ScrapForm onScrapAdd={handleScrapAdd} />
             <ScrapList scraps={scraps} />
         </div>

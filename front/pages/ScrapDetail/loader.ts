@@ -1,5 +1,5 @@
 import { LoaderFunction } from "react-router-dom";
-import { getScrap } from "../../services/scrapService";
+import { getScrap } from "../../entities/scrap/lib/scrapService";
 
 // Scrap 상세 데이터를 로드하는 loader 함수 정의
 export const scrapDetailLoader: LoaderFunction = async ({ params }) => {
