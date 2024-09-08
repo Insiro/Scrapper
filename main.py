@@ -1,5 +1,6 @@
 from os import makedirs
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 from server.database import engine, Base
@@ -26,6 +27,7 @@ app.add_middleware(
 Base.metadata.create_all(bind=engine)
 
 # Include the router
+app.mount("/media", StaticFiles(directory=config.media), name="media")
 app.include_router(router, prefix="/api")
 
 
