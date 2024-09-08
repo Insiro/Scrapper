@@ -1,5 +1,5 @@
 import { ReactNode, useState } from "react";
-import { LayoutContext } from "../../entities/title/lib/layoutContext";
+import { TitleContext } from "../../entities/title/lib/titleContext";
 
 interface LayoutProviderProps {
     children: ReactNode;
@@ -8,5 +8,5 @@ interface LayoutProviderProps {
 export const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
     const [pageTitle, setPageTitle] = useState<string>("Home");
 
-    return <LayoutContext.Provider value={{ pageTitle, setPageTitle }}> {children} </LayoutContext.Provider>;
+    return <TitleContext.Provider value={{ pageTitle, setPageTitle }}> {children} </TitleContext.Provider>;
 };

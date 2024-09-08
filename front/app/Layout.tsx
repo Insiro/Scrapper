@@ -1,8 +1,8 @@
 import React, { CSSProperties } from "react";
 import { Outlet } from "react-router-dom";
 
-import PageTitle from "../widgets/PageTitle";
-import { useLayoutContext } from "../entities/title/lib/useLayoutContext";
+import PageTitle from "@/widgets/PageTitle";
+import { useTitleContext } from "@/entities/title";
 
 // 스타일 정의
 const layoutStyles: Record<string, CSSProperties> = {
@@ -18,7 +18,7 @@ const layoutStyles: Record<string, CSSProperties> = {
 };
 
 const Layout: React.FC = () => {
-    const { setPageTitle } = useLayoutContext();
+    const { setPageTitle } = useTitleContext();
     return (
         <div style={layoutStyles.container}>
             <main style={layoutStyles.content}>

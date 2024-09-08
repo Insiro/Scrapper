@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useLoaderData } from "react-router-dom";
 
-import ScrapForm from "../../widgets/ScrapForm";
-import ScrapList from "../../widgets/ScrapList";
-import { useLayoutContext } from "../../entities/title/lib/useLayoutContext";
-import { Scrap } from "../../entities/scrap/Scrap";
+import ScrapForm from "@/widgets/ScrapForm";
+import ScrapList from "@/widgets/ScrapList";
+import { useTitleContext } from "@/entities/title";
+import { Scrap } from "@/entities/scrap";
 
-const HomePage: React.FC = () => {
-    const { setPageTitle } = useLayoutContext(); // LayoutContext에서 상태 업데이트 함수 가져오기
+export const HomePage: React.FC = () => {
+    const { setPageTitle } = useTitleContext(); // LayoutContext에서 상태 업데이트 함수 가져오기
 
     useEffect(() => {
         setPageTitle("Scrap List");

@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Scrap } from "../entities/scrap/Scrap";
+import { Scrap } from "@/entities/scrap";
+import { color } from "@/shared/constant";
 
 interface ScrapListProps {
     scraps: Scrap[];
@@ -21,7 +22,7 @@ const ScrapList: React.FC<ScrapListProps> = ({ scraps }) => {
     };
 
     const linkStyle = {
-        color: "#007bff",
+        color: color.blue,
         textDecoration: "underline",
     };
 

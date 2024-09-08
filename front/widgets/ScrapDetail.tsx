@@ -1,9 +1,11 @@
 import React, { useState, useEffect, CSSProperties } from "react";
 import { Card } from "./Common/Card";
 import { Button } from "./Common/Button";
-import { reScrap } from "../entities/scrap/lib/scrapService";
-import { deleteImage } from "../entities/scrapImage/lib/api";
-import { Scrap } from "../entities/scrap/Scrap";
+import { scrapApi } from "@/entities/scrap";
+import { api as imageApi } from "@/entities/scrapImage";
+import { Scrap } from "@/entities/scrap";
+import { color } from "@/shared/constant";
+import ConfirmModal from "./Common/Confirm";
 
 // ScrapDetail 스타일 객체
 const styles: Record<string, CSSProperties> = {
@@ -41,19 +43,21 @@ const styles: Record<string, CSSProperties> = {
 
 interface ScrapDetailProps {
     scrap: Scrap;
+    refreshScrap: () => void;
 }
 
-const ScrapDetail: React.FC<ScrapDetailProps> = ({ scrap }) => {
+const ScrapDetail: React.FC<ScrapDetailProps> = ({ scrap, refreshScrap }) => {
     const [selectedImages, setSelectedImages] = useState<Set<number>>(new Set());
     const [isReScraping, setIsReScraping] = useState<boolean>(false);
     const [isSmallScreen, setIsSmallScreen] = useState<boolean>(window.innerWidth <= 600);
+    const [isDelModalOpen, setIsDelModalOpen] = useState<boolean>(false);
+    const [isReScrapModalOpen, setIsReScrapModalOpen] = useState<boolean>(false);
 
     useEffect(() => {
         // 화면 크기 변경 감지
         const handleResize = () => setIsSmallScreen(window.innerWidth <= 600);
-
         window.addEventListener("resize", handleResize);
-        // 컴포넌트 언마운트 시 이벤트 리스너 제거
+
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
@@ -67,35 +71,44 @@ const ScrapDetail: React.FC<ScrapDetailProps> = ({ scrap }) => {
         });
     };
 
-    const handleDeleteSelectedImages = async () => {
-        if (selectedImages.size === 0) {
-            alert("Please select images to delete.");
+    const actionDeleteImage = async (confirm: boolean) => {
+        if (!confirm) {
+            setIsDelModalOpen(false);
+            setSelectedImages(new Set());
             return;
         }
-
         try {
-            await deleteImage(Array.from(selectedImages));
+            await imageApi.deleteImage(Array.from(selectedImages));
             alert("Selected images have been deleted.");
             setSelectedImages(new Set());
-            // 이미지 삭제 후 로직 추가 (예: 목록 갱신)
+            refreshScrap();
         } catch (error) {
             alert("Failed to delete selected images.");
             console.error("Error deleting images:", error);
         }
+        setIsDelModalOpen(false);
     };
 
-    const handleReScrap = async () => {
+    const handleDeleteSelectedImages = () => setIsDelModalOpen(true);
+
+    const handleReScrap = () => setIsReScrapModalOpen(true);
+
+    const actionReScrap = async (confirm: boolean) => {
+        if (!confirm) {
+            setIsReScrapModalOpen(false);
+            return;
+        }
         setIsReScraping(true);
         try {
-            await reScrap(scrap.id);
+            await scrapApi.reScrap(scrap.id);
             alert("Scrap has been successfully updated.");
-            // 여기서 서버로부터 새롭게 갱신된 스크랩 데이터를 가져와 업데이트할 수 있음
+            refreshScrap();
         } catch (error) {
-            alert("Failed to re_scrap the URL.");
-            console.error("Error re_scraping:", error);
-        } finally {
-            setIsReScraping(false);
+            alert("Failed to re:scrap the URL.");
+            console.error("Error re:scraping:", error);
         }
+        setIsReScraping(false);
+        setIsReScrapModalOpen(false);
     };
 
     return (
@@ -131,12 +144,15 @@ const ScrapDetail: React.FC<ScrapDetailProps> = ({ scrap }) => {
                 ) : (
                     <p>No images available</p>
                 )}
-                <Button backgroundColor="#d9534f" onClick={handleDeleteSelectedImages}>
+                <hr />
+                <Button backgroundColor={color.red} onClick={handleDeleteSelectedImages}>
                     Delete Selected Images
                 </Button>
-                <Button backgroundColor="#007bff" onClick={handleReScrap} disabled={isReScraping}>
-                    {isReScraping ? "Re_scraping..." : "Re_scrap"}
+                <Button backgroundColor={color.blue} onClick={handleReScrap} disabled={isReScraping}>
+                    {isReScraping ? "Re:Scraping..." : "Re:Scrap"}
                 </Button>
+                <ConfirmModal isOpen={isReScrapModalOpen} title="Confirm Re:Scrap" message="Are you sure re:scrap this?" action={actionReScrap} />
+                <ConfirmModal isOpen={isDelModalOpen} title="Confirm Delete" message="Are you sure delete the selected images?" action={actionDeleteImage} />
             </Card>
         </>
     );

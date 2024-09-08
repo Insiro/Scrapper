@@ -1,7 +1,8 @@
 import React, { Fragment } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Card } from "./Common/Card";
-import { useLayoutContext } from "../entities/title/lib/useLayoutContext";
+import { useTitleContext } from "@/entities/title";
+import { color } from "@/shared/constant";
 
 // 스타일 정의
 const titleStyle = {
@@ -12,19 +13,19 @@ const titleStyle = {
 
 const linkStyle = {
     textDecoration: "none",
-    color: "#007bff",
+    color: color.blue,
     fontSize: "0.9rem",
     marginRight: "0.5rem",
 };
 
 const separatorStyle = {
-    color: "#666",
+    color: color.gray2,
     margin: "0 0.5rem",
     fontSize: "0.9rem",
 };
 
 const PageTitle: React.FC = () => {
-    const { pageTitle } = useLayoutContext();
+    const { pageTitle } = useTitleContext();
     const location = useLocation();
     const pathnames = location.pathname.split("/").filter((x) => x);
 
@@ -35,7 +36,7 @@ const PageTitle: React.FC = () => {
         return index === pathnames.length - 1 ? (
             <Fragment key={index}>
                 <span style={separatorStyle}>/</span>
-                <span key={to} style={{ fontSize: "0.9rem", color: "#333" }}>
+                <span key={to} style={{ fontSize: "0.9rem", color: color.gray1 }}>
                     {value}
                 </span>
             </Fragment>

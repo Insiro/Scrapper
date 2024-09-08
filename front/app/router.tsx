@@ -1,22 +1,20 @@
 import { createBrowserRouter, RouteObject } from "react-router-dom";
-import HomePage from "../pages/HomePage/HomePage";
-import ScrapDetailPage from "../pages/ScrapDetail/ScrapDetailPage";
-import NotFoundPage from "../pages/NotFound";
-import { homePageLoader } from "../pages/HomePage/loader";
-import { scrapDetailLoader } from "../pages/ScrapDetail/loader";
+
 import Layout from "./Layout";
+import { HomePage, loader, NotFoundPage, ScrapDetailPage } from "@/pages";
+import Config from "@/shared/config";
 
 // createBrowserRouter를 사용하여 라우터 구성
 const router: RouteObject[] = [
     {
         path: "/",
         element: <HomePage />,
-        loader: homePageLoader,
+        loader: loader.home,
     },
     {
         path: "/scraps/:scrapId",
         element: <ScrapDetailPage />,
-        loader: scrapDetailLoader,
+        loader: loader.scrap,
     },
     {
         path: "*",
@@ -26,7 +24,7 @@ const router: RouteObject[] = [
 
 const rootRouter = createBrowserRouter([
     {
-        path: "/",
+        path: Config.basePath,
         children: router,
         element: <Layout />,
     },

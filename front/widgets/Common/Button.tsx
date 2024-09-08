@@ -8,6 +8,7 @@ const ButtonStyle = {
     borderRadius: "4px",
     cursor: "pointer",
     fontSize: "1rem",
+    marginInline: "1rem",
 };
 
 interface BtnProps extends PropsWithChildren, React.ComponentPropsWithRef<"button"> {

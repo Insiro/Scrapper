@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Scrap } from "../entities/scrap/Scrap";
+import { Scrap } from "@/entities/scrap";
 import { Button } from "./Common/Button";
-import { createScrap } from "../entities/scrap/lib/scrapService";
+import { scrapApi } from "@/entities/scrap";
 import { Card } from "./Common/Card";
+import { color } from "@/shared/constant";
 
 interface ScrapFormProps {
     onScrapAdd: (scrap: Scrap) => void;
@@ -15,7 +16,7 @@ const ScrapForm: React.FC<ScrapFormProps> = ({ onScrapAdd }) => {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
-            const scrap = await createScrap(url);
+            const scrap = await scrapApi.createScrap(url);
             onScrapAdd(scrap);
             setUrl("");
         } catch {
@@ -48,7 +49,7 @@ const ScrapForm: React.FC<ScrapFormProps> = ({ onScrapAdd }) => {
         <Card style={formStyle}>
             {error && <p style={errorStyle}>{error}</p>}
             <input type="text" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="Enter URL to scrap" style={inputStyle} />
-            <Button backgroundColor="#007bff" onClick={handleSubmit} style={{ height: "40px" }}>
+            <Button backgroundColor={color.blue} onClick={handleSubmit} style={{ height: "40px" }}>
                 Scrap URL
             </Button>
         </Card>
