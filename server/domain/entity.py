@@ -1,8 +1,9 @@
 from typing import List
-from sqlalchemy import Column, ForeignKey, Integer, String, Text
-from sqlalchemy.orm import relationship, Mapped
 
-from src.database import Base
+from sqlalchemy import Column, ForeignKey, Integer, String, Text
+from sqlalchemy.orm import Mapped, relationship
+
+from server.database import Base
 
 
 class Image:

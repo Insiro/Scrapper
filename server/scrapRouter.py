@@ -3,7 +3,8 @@ from typing import List
 from fastapi import APIRouter, Depends
 
 from .domain.dto import ScrapResponse, ScrapUpdate
-from .scrapController import ScrapAPIController, URLInput, get_scrap_api_controller
+from .scrapController import (ScrapAPIController, URLInput,
+                              get_scrap_api_controller)
 
 router = APIRouter()
 

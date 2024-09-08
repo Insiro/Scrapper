@@ -4,11 +4,11 @@ from typing import Any, Dict
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from .utils.config import Config
 from .database import get_db
 from .domain.dto import ScrapResponse, ScrapUpdate, URLInput
 from .downloader import Scrapper  # Scrapper 클래스 임포트
 from .repository import *
+from .utils.config import Config
 
 router = APIRouter()
 

@@ -1,9 +1,9 @@
 from urllib.parse import urlsplit, urlunsplit
 from uuid import uuid4
 
-from src.domain.dto import ScrapCreate
-from src.utils.bsLoader import load_soup
-from src.utils.saveImg import download_image
+from server.domain.dto import ScrapCreate
+from server.utils.bsLoader import load_soup
+from server.utils.saveImg import download_image
 
 from .AbsDownloader import AbsDownloader
 

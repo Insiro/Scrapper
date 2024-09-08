@@ -1,8 +1,10 @@
 from os import path, remove, rename
 from typing import List
+
 from sqlalchemy.orm import Session
-from src.domain.entity import Image
-from src.utils.config import Config  # 모델 정의가 포함된 모듈
+
+from server.domain.entity import Image
+from server.utils.config import Config  # 모델 정의가 포함된 모듈
 
 
 class ImageRepository:

@@ -245,6 +245,12 @@ Temporary Items
 # iCloud generated files
 *.icloud
 
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db

@@ -1,8 +1,8 @@
 from os import makedirs
 from fastapi import FastAPI
-from src.database import engine, Base
-from src.scrapRouter import router
-from src.utils.config import config
+from server.database import engine, Base
+from server.scrapRouter import router
+from server.utils.config import config
 
 makedirs(config.media, exist_ok=True)
 makedirs(config.export, exist_ok=True)

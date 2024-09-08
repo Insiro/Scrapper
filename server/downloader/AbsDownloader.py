@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
-from src.domain.dto import ScrapCreate
+from server.domain.dto import ScrapCreate
 
 
 class AbsDownloader(metaclass=ABCMeta):
