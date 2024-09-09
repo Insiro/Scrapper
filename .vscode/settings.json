@@ -1,10 +1,3 @@
 {
-    "cSpell.words": [
-        "autoflush",
-        "fastapi",
-        "pydantic",
-        "sqlalchemy",
-        "tseslint",
-        "uselist"
-    ]
+    "cSpell.words": ["autoflush", "fastapi", "Hoyolab", "pydantic", "sqlalchemy", "tseslint", "uselist"]
 }

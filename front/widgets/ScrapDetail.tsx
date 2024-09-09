@@ -68,7 +68,7 @@ const styles: Record<string, CSSProperties> = {
 
 interface ScrapDetailProps {
     scrap: Scrap;
-    refreshScrap: () => void;
+    refreshScrap: () => void | Promise<void>;
 }
 
 const ScrapDetail: React.FC<ScrapDetailProps> = ({ scrap, refreshScrap }) => {
@@ -106,7 +106,8 @@ const ScrapDetail: React.FC<ScrapDetailProps> = ({ scrap, refreshScrap }) => {
             await imageApi.deleteImage(Array.from(selectedImages));
             alert("Selected images have been deleted.");
             setSelectedImages(new Set());
-            refreshScrap();
+            const result = refreshScrap();
+            if (result instanceof Promise) await result;
         } catch (error) {
             alert("Failed to delete selected images.");
             console.error("Error deleting images:", error);
@@ -127,7 +128,9 @@ const ScrapDetail: React.FC<ScrapDetailProps> = ({ scrap, refreshScrap }) => {
         try {
             await scrapApi.reScrap(scrap.id);
             alert("Scrap has been successfully updated.");
-            refreshScrap();
+            const result = refreshScrap();
+
+            if (result instanceof Promise) await result;
         } catch (error) {
             alert("Failed to re:scrap the URL.");
             console.error("Error re:scraping:", error);

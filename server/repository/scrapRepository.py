@@ -16,6 +16,8 @@ class ScrapRepository:
             author_name=scrap_data.author_name,
             author_tag=scrap_data.author_tag,
             source=scrap_data.source,
+            content=scrap_data.content,
+            comment =scrap_data.comment
         )
         self.db.add(db_scrap)
         self.db.commit()

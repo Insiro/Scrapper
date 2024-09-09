@@ -10,7 +10,7 @@ from server.utils.config import Config  # 모델 정의가 포함된 모듈
 class ImageRepository:
     def __init__(self, db: Session, config: Config):
         self.db = db
-        self.media_path = config.storage
+        self.media_path = config.media
 
     def save_images(self, files: List[str], scrap_id: int) -> None:
         """
@@ -55,6 +55,7 @@ class ImageRepository:
         images = self.db.query(Image).filter(Image.scrap_id == scrap_id).all()
         for image in images:
             file = path.join(self.media_path, image.file_name)
+            print(file)
             if path.exists(file):
                 remove(file)
 

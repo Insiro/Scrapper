@@ -46,7 +46,7 @@ class ScrapAPIController:
 
     async def re_scrap(self, scrap_id: int):
         existing_scrap = self.repo.get_scrap(scrap_id)
-        scrapper = self.scrapper.getInstance(type=existing_scrap.source)
+        scrapper = self.scrapper.getInstance(type_name=existing_scrap.source)
         url = scrapper.preprocess_url(existing_scrap.url)
         data = await scrapper.scrap(url)
         scrap = self.repo.update_scrap(existing_scrap, data)
