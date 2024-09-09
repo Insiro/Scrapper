@@ -1,4 +1,4 @@
-import React, { useState, useEffect, CSSProperties } from "react";
+import React, { useState, useEffect, CSSProperties, FC } from "react";
 import { Card } from "./Common/Card";
 import { Button } from "./Common/Button";
 import { scrapApi } from "@/entities/scrap";
@@ -6,6 +6,23 @@ import { api as imageApi } from "@/entities/scrapImage";
 import { Scrap } from "@/entities/scrap";
 import { color } from "@/shared/constant";
 import ConfirmModal from "./Common/Confirm";
+import Config from "@/shared/config";
+
+const ContentLine: FC<{ title: string; content: string | undefined }> = ({ title, content }) => {
+    return (
+        <>
+            <strong style={{ fontWeight: "bold", color: "#333", fontSize: "1.1rem", marginRight: "0.5rem" }}>{title}</strong>
+            <div style={{ whiteSpace: "pre-line", color: "#555", lineHeight: "1.5" }}>
+                {content?.split("\n").map((line, index) => (
+                    <React.Fragment key={index}>
+                        {line}
+                        <br />
+                    </React.Fragment>
+                ))}
+            </div>
+        </>
+    );
+};
 
 // ScrapDetail 스타일 객체
 const styles: Record<string, CSSProperties> = {
@@ -38,6 +55,14 @@ const styles: Record<string, CSSProperties> = {
         height: "auto",
         borderRadius: "4px",
         objectFit: "cover",
+    },
+    contentContainer: {
+        marginBottom: "1rem",
+        fontSize: "1rem",
+        display: "grid",
+        gridTemplateColumns: "max-content 1fr",
+        gap: "1rem",
+        alignItems: "start",
     },
 };
 
@@ -115,35 +140,25 @@ const ScrapDetail: React.FC<ScrapDetailProps> = ({ scrap, refreshScrap }) => {
         <>
             <Card>
                 <h2>Content</h2>
-                <p style={styles.detail}>
-                    <strong>URL:</strong> {scrap.url}
-                </p>
-                <p style={styles.detail}>
-                    <strong>Author:</strong> {scrap.author_name} (@{scrap.author_tag})
-                </p>
-                <p style={styles.detail}>
-                    <strong>Content:</strong> {scrap.content}
-                </p>
-                {scrap.comment && (
-                    <p style={styles.detail}>
-                        <strong>Comment:</strong> {scrap.comment}
-                    </p>
-                )}
+                <div style={styles.contentContainer}>
+                    <ContentLine title="Url" content={scrap.url} />
+                    <ContentLine title="Author" content={`${scrap.author_name} (@${scrap.author_tag})`} />
+                    <ContentLine title="Content" content={scrap.content} />
+                    {scrap.comment && <ContentLine title="Comment" content={scrap.comment} />}
+                </div>
             </Card>
             <Card style={{ marginTop: "1rem" }}>
                 <h2>Images</h2>
-                {scrap.images.length > 0 ? (
-                    <div style={isSmallScreen ? { ...styles.imageContainer, gridTemplateColumns: "repeat(1, 1fr)" } : styles.imageContainer}>
-                        {scrap.images.map((image) => (
-                            <div key={image.id} style={styles.imageWrapper}>
-                                <input type="checkbox" style={styles.checkbox} checked={selectedImages.has(image.id)} onChange={() => handleImageSelect(image.id)} />
-                                <img src={`http://localhost:8000/media/${image.file_name}`} alt={image.file_name} style={styles.image} />
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <p>No images available</p>
-                )}
+
+                <div style={isSmallScreen ? { ...styles.imageContainer, gridTemplateColumns: "repeat(1, 1fr)" } : styles.imageContainer}>
+                    {scrap.images.map((image) => (
+                        <div key={image.id} style={styles.imageWrapper}>
+                            <input type="checkbox" style={styles.checkbox} checked={selectedImages.has(image.id)} onChange={() => handleImageSelect(image.id)} />
+                            <img src={`${Config.hostPath}media/${image.file_name}`} alt={image.file_name} style={styles.image} />
+                        </div>
+                    ))}
+                </div>
+
                 <hr />
                 <Button backgroundColor={color.red} onClick={handleDeleteSelectedImages}>
                     Delete Selected Images
