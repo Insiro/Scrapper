@@ -433,3 +433,5 @@ sketch
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,linux,windows
 storage/
+!front/**/lib/
+!server/**/lib/
