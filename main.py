@@ -27,8 +27,10 @@ base_url = config.base_url
 Base.metadata.create_all(bind=engine)
 
 # Include the router
-app.mount(path.join(base_url, "/media"), StaticFiles(directory=config.media), name="media")
-app.include_router(router, prefix=path.join(base_url,"/api"))
+app.mount(
+    path.join(base_url, "media"), StaticFiles(directory=config.media), name="media"
+)
+app.include_router(router, prefix=path.join(base_url, "api"))
 
 
 @app.get("/")
