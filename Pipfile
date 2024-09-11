@@ -11,6 +11,8 @@ fastapi = "*"
 pydantic = "*"
 sqlalchemy = "*"
 python-dotenv = "*"
+playwright = "*"
+uvicorn = "*"
 
 [dev-packages]
 types-requests = "*"

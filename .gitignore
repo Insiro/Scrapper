@@ -435,3 +435,4 @@ sketch
 storage/
 !front/**/lib/
 !server/**/lib/
+*.db
