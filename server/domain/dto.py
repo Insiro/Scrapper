@@ -39,6 +39,7 @@ class ImageResponse(BaseModel):
 
 class ScrapResponse(BaseModel):
     id: int
+    source: str
     url: str
     content: Optional[str]
     author_name: str
@@ -56,4 +57,5 @@ class ScrapResponse(BaseModel):
             author_name=scrap.author_name,
             author_tag=scrap.author_tag,
             images=[ImageResponse(id=image.id, file_name=image.file_name) for image in scrap.images],
+            source=scrap.source,
         )

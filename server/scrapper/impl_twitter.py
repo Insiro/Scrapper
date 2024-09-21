@@ -12,11 +12,14 @@ class ImplTwitter(Scrapper):
     async def scrap(self, url):
         split_url = urlsplit(url)
         url = urlunsplit((split_url.scheme, split_url.netloc, split_url.path, "", split_url.fragment))
+
         soup = await load_soup(url)
         article = soup.find("article")
         author = article.find("div", {"data-testid": "User-Name"}).find_all("a")
-        content = article.find("div").find("div").find_all("div", recursive=False)[2]
-        img_list = content.find_all("img", recursive=True)
+        wrapper = article.find("div").find("div").find_all("div", recursive=False)[2]
+        img_list = wrapper.find_all("img", recursive=True)
+
+        content = wrapper.find("div").find("div").find("div")
 
         name = author[0].get_text()
         tag = author[1].get_text()
@@ -32,7 +35,7 @@ class ImplTwitter(Scrapper):
             url=url,
             source=PageType.twitter,
             image_names=fname_list,
-            content=content.get_text(),
+            content=content.text,
         )
 
     def preprocess_url(self, url: str) -> str:
