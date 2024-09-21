@@ -1,6 +1,6 @@
 import { CSSProperties, FC, PropsWithChildren } from "react";
 
-const ButtonStyle = {
+const ButtonStyle: CSSProperties = {
     marginTop: "0.5rem",
     padding: "0.5rem 1rem",
     color: "#fff",
@@ -9,6 +9,7 @@ const ButtonStyle = {
     cursor: "pointer",
     fontSize: "1rem",
     marginInline: "1rem",
+    minWidth: "fit-content",
 };
 
 interface BtnProps extends PropsWithChildren, React.ComponentPropsWithRef<"button"> {

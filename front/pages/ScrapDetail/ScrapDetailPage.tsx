@@ -8,14 +8,12 @@ import { Scrap, scrapApi } from "@/entities/scrap";
 export const ScrapDetailPage: React.FC = () => {
     const initialScrap = useLoaderData() as Scrap; // useLoaderData로 로드된 데이터를 가져옵니다.
     const location = useLocation();
-    const scrapId = useMemo(() => {
-        location.pathname.split("/").at(-1);
-    }, [location]);
+    const scrapId = useMemo(() => location.pathname.split("/").at(-1), [location]);
     const [scrap, setScrap] = useState(initialScrap);
     const { setPageTitle } = useTitleContext();
     const navigate = useNavigate();
     const refreshScrap = async () => {
-        if (scrapId === undefined) return;
+        if (scrapId === undefined) return navigate("404");
         const sc = await scrapApi.getScrap(parseInt(scrapId));
         if (sc === null) return navigate("404");
         setScrap(sc);

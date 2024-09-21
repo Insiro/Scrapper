@@ -7,6 +7,7 @@ interface ModalProps {
     title: string;
     message: string;
     action: (confirm: boolean) => void;
+    disabled?: boolean;
 }
 
 const modalOverlayStyle: React.CSSProperties = {
@@ -36,7 +37,7 @@ const buttonContainerStyle: React.CSSProperties = {
     marginTop: "1rem",
 };
 
-const ConfirmModal: React.FC<ModalProps> = ({ isOpen, title, message, action }) => {
+const ConfirmModal: React.FC<ModalProps> = ({ isOpen, title, message, action, disabled }) => {
     if (!isOpen) return null; // 모달이 열려있지 않으면 렌더링하지 않음
 
     return (
@@ -45,10 +46,10 @@ const ConfirmModal: React.FC<ModalProps> = ({ isOpen, title, message, action }) 
                 <h2>{title}</h2>
                 <p>{message}</p>
                 <div style={buttonContainerStyle}>
-                    <Button onClick={() => action(false)} style={{ backgroundColor: color.gray1 }}>
+                    <Button onClick={() => action(false)} style={{ backgroundColor: color.gray1 }} disabled={disabled}>
                         Cancel
                     </Button>
-                    <Button onClick={() => action(true)} style={{ backgroundColor: color.red, color: "#fff" }}>
+                    <Button onClick={() => action(true)} style={{ backgroundColor: color.red, color: "#fff" }} disabled={disabled}>
                         Confirm
                     </Button>
                 </div>

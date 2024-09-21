@@ -19,10 +19,12 @@ export const HomePage: React.FC = () => {
     // 스크랩 목록 상태 관리
     const [scraps, setScraps] = useState<Scrap[]>(initialScraps);
 
-    const handleScrapAdd = (newScrap: Scrap) => setScraps((prevScraps) => [newScrap, ...prevScraps]);
+    const handleScrapAdd = (newScrap: Scrap) => {
+        setScraps((prevScraps) => [...prevScraps, newScrap]);
+    };
 
     return (
-        <div>
+        <div style={{ textAlign: "center" }}>
             <ScrapForm onScrapAdd={handleScrapAdd} />
             <ScrapList scraps={scraps} />
         </div>

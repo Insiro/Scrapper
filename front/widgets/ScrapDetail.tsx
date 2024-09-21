@@ -1,17 +1,23 @@
-import React, { useState, useEffect, CSSProperties, FC } from "react";
+import React, { useState, CSSProperties, FC, PropsWithChildren } from "react";
 import { Card } from "./Common/Card";
 import { Button } from "./Common/Button";
+import ConfirmModal from "./Common/Confirm";
+
 import { scrapApi } from "@/entities/scrap";
 import { api as imageApi } from "@/entities/scrapImage";
 import { Scrap } from "@/entities/scrap";
 import { color } from "@/shared/constant";
-import ConfirmModal from "./Common/Confirm";
 import Config from "@/shared/config";
+import { useIsSmallScreen } from "@/shared/smallScreen/useIsSmallSize";
 
-const ContentLine: FC<{ title: string; content: string | undefined }> = ({ title, content }) => {
+type inlineProps = { title: string; content: string; children: undefined };
+type ContentLineProps = inlineProps | PropsWithChildren<{ title: string; content?: string }>;
+
+const ContentLine: FC<ContentLineProps> = ({ title, content, children }) => {
+    const titleStyle = { fontWeight: "bold", color: "#333", fontSize: "1.1rem", marginRight: "0.5rem" };
     return (
         <>
-            <strong style={{ fontWeight: "bold", color: "#333", fontSize: "1.1rem", marginRight: "0.5rem" }}>{title}</strong>
+            <strong style={titleStyle}>{title}</strong>
             <div style={{ whiteSpace: "pre-line", color: "#555", lineHeight: "1.5" }}>
                 {content?.split("\n").map((line, index) => (
                     <React.Fragment key={index}>
@@ -19,6 +25,7 @@ const ContentLine: FC<{ title: string; content: string | undefined }> = ({ title
                         <br />
                     </React.Fragment>
                 ))}
+                {children}
             </div>
         </>
     );
@@ -74,17 +81,10 @@ interface ScrapDetailProps {
 const ScrapDetail: React.FC<ScrapDetailProps> = ({ scrap, refreshScrap }) => {
     const [selectedImages, setSelectedImages] = useState<Set<number>>(new Set());
     const [isReScraping, setIsReScraping] = useState<boolean>(false);
-    const [isSmallScreen, setIsSmallScreen] = useState<boolean>(window.innerWidth <= 600);
     const [isDelModalOpen, setIsDelModalOpen] = useState<boolean>(false);
     const [isReScrapModalOpen, setIsReScrapModalOpen] = useState<boolean>(false);
 
-    useEffect(() => {
-        // 화면 크기 변경 감지
-        const handleResize = () => setIsSmallScreen(window.innerWidth <= 600);
-        window.addEventListener("resize", handleResize);
-
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
+    const isSmallScreen = useIsSmallScreen();
 
     const handleImageSelect = (imageId: number) => {
         setSelectedImages((prevSelectedImages) => {
@@ -143,8 +143,12 @@ const ScrapDetail: React.FC<ScrapDetailProps> = ({ scrap, refreshScrap }) => {
         <>
             <Card>
                 <h2>Content</h2>
-                <div style={styles.contentContainer}>
-                    <ContentLine title="Url" content={scrap.url} />
+                <div style={isSmallScreen ? { ...styles.contentContainer, display: "block" } : { ...styles.contentContainer }}>
+                    <ContentLine title="Source">
+                        <a style={{ wordBreak: "break-all" }} href={scrap.url}>
+                            {scrap.source} : {scrap.url}
+                        </a>
+                    </ContentLine>
                     <ContentLine title="Author" content={`${scrap.author_name} (@${scrap.author_tag})`} />
                     <ContentLine title="Content" content={scrap.content} />
                     {scrap.comment && <ContentLine title="Comment" content={scrap.comment} />}
@@ -169,7 +173,7 @@ const ScrapDetail: React.FC<ScrapDetailProps> = ({ scrap, refreshScrap }) => {
                 <Button backgroundColor={color.blue} onClick={handleReScrap} disabled={isReScraping}>
                     {isReScraping ? "Re:Scraping..." : "Re:Scrap"}
                 </Button>
-                <ConfirmModal isOpen={isReScrapModalOpen} title="Confirm Re:Scrap" message="Are you sure re:scrap this?" action={actionReScrap} />
+                <ConfirmModal isOpen={isReScrapModalOpen} title="Confirm Re:Scrap" message="Are you sure re:scrap this?" action={actionReScrap} disabled={isReScraping} />
                 <ConfirmModal isOpen={isDelModalOpen} title="Confirm Delete" message="Are you sure delete the selected images?" action={actionDeleteImage} />
             </Card>
         </>

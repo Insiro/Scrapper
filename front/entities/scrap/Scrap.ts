@@ -8,4 +8,5 @@ export interface Scrap {
     author_tag: string;
     images: ScrapImage[];
     comment?: string;
+    source?: string;
 }
