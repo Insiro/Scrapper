@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod
 from server.domain.dto import ScrapCreate
 
 
-class AbsDownloader(metaclass=ABCMeta):
+class Scrapper(metaclass=ABCMeta):
 
     @abstractmethod
     async def scrap(self, url: str) -> ScrapCreate:

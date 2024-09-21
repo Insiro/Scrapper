@@ -1,5 +1,5 @@
-import os
-from os import getenv, path, getcwd
+import json
+from os import getcwd, getenv, path
 
 
 class Config:
@@ -21,7 +21,7 @@ class Config:
             "SCRAPER_DB_HOST", ""
         )  # 데이터베이스 호스트 (SQLite의 경우 필요하지 않음)
         self.db_port = getenv("SCRAPER_DB_PORT", 5432)
-        self.db_name = getenv("SCRAPER_DB_NAME", path.join(self.media, "scrapper.db"))
+        self.db_name = getenv("SCRAPER_DB_NAME", path.join(self.storage, "scrapper.db"))
 
         # 기본값으로 SQLite DB URL 생성, 다른 DB의 경우 별도의 형식으로 생성
         if self.db_driver == "sqlite":
@@ -31,9 +31,7 @@ class Config:
 
         # 기본 URL 설정
         self.base_url = getenv("SCRAPER_BASE_PATH", "/")
+        print(json.dumps(self.__dict__, indent=2))
 
 
 config = Config()
-import json
-
-print(json.dumps(config.__dict__, indent=2))

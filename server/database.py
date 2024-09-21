@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from .utils.config import config
+from .utils import config
 
 engine = create_engine(config.db_url, connect_args={"check_same_thread": False} if config.db_driver == "sqlite" else {})
 

@@ -6,9 +6,9 @@ from sqlalchemy.orm import Session
 
 from .database import get_db
 from .domain.dto import ImageDelete, ScrapResponse, ScrapUpdate, URLInput
-from .downloader import Scrapper  # Scrapper 클래스 임포트
 from .repository import *
-from .utils.config import Config
+from .scrapper import ScrapperFactory  # Scrapper 클래스 임포트
+from .utils import config
 
 router = APIRouter()
 
@@ -18,7 +18,7 @@ class ScrapAPIController:
         self,
         repo: ScrapRepository,
         img_repo: ImageRepository,
-        scrapper: Scrapper,
+        scrapper: ScrapperFactory,
         logger: logging.Logger,
         cache: Dict[str, Any],
     ):
@@ -97,11 +97,12 @@ class ScrapAPIController:
 # Dependency
 def get_scrap_api_controller(
     db: Session = Depends(get_db),
-    scrapper: Scrapper = Depends(Scrapper),
-    config: Config = Depends(Config),
+    scrapper: ScrapperFactory = Depends(ScrapperFactory),
     logger: logging.Logger = Depends(lambda: logging.getLogger("api")),
     cache: Dict[str, Any] = Depends(lambda: {}),
 ) -> ScrapAPIController:
     repo = ScrapRepository(db=db)
     img_repo = ImageRepository(db=db, config=config)
-    return ScrapAPIController(repo=repo, img_repo=img_repo, scrapper=scrapper, logger=logger, cache=cache)
+    return ScrapAPIController(
+        repo=repo, img_repo=img_repo, scrapper=scrapper, logger=logger, cache=cache
+    )

@@ -6,10 +6,6 @@ from sqlalchemy.orm import Mapped, relationship
 from server.database import Base
 
 
-class Image:
-    pass
-
-
 class Scrap(Base):
     __tablename__ = "scraps"
 

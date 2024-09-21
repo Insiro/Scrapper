@@ -19,6 +19,7 @@ types-requests = "*"
 mypy = "*"
 types-beautifulsoup4 = "*"
 sqlalchemy-stubs = "*"
+ipykernel = "*"
 
 [requires]
 python_version = "3.12"

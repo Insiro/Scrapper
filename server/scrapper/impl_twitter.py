@@ -2,13 +2,13 @@ from urllib.parse import urlsplit, urlunsplit
 from uuid import uuid4
 
 from server.domain.dto import ScrapCreate
-from server.utils.bsLoader import load_soup
-from server.utils.saveImg import download_image
+from server.utils import download_image, load_soup
 
-from .AbsDownloader import AbsDownloader
+from .PageType import PageType
+from .Scrapper import Scrapper
 
 
-class TwitterDownloader(AbsDownloader):
+class ImplTwitter(Scrapper):
     async def scrap(self, url):
         split_url = urlsplit(url)
         url = urlunsplit((split_url.scheme, split_url.netloc, split_url.path, "", split_url.fragment))
@@ -30,13 +30,12 @@ class TwitterDownloader(AbsDownloader):
             author_name=name,
             author_tag=tag,
             url=url,
-            source="twitter",
+            source=PageType.twitter,
             image_names=fname_list,
             content=content.get_text(),
         )
 
     def preprocess_url(self, url: str) -> str:
-        # Twitter의 경우 쿼리 파라미터를 제거합니다.
         split_url = urlsplit(url)
         return urlunsplit((split_url.scheme, split_url.netloc, split_url.path, "", split_url.fragment))
 
@@ -44,6 +43,6 @@ class TwitterDownloader(AbsDownloader):
 if __name__ == "__main__":
     tweet_url = input("Enter the Twitter URL: ")
 
-    downloader = TwitterDownloader()
+    downloader = ImplTwitter()
     result = downloader.scrap(tweet_url)
     print(result)
