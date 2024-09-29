@@ -29,7 +29,7 @@ const rootRouter = createBrowserRouter(
             element: <Layout />,
         },
     ],
-    { basename: "/" + Config.basePath }
+    { basename: Config.basePath }
 );
 
 export default rootRouter;

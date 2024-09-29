@@ -8,7 +8,6 @@ const Config = {
     apiHost,
     apiPort,
     hostPath,
-    api: hostPath + "/api"
 };
 console.log(Config)
 export default Config
