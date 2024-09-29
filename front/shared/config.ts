@@ -1,12 +1,17 @@
 const basePath = import.meta.env.SCRAPER_BASE_PATH || "/";
 const apiHost = import.meta.env.SCRAPER_API_HOST || "";
-const apiPort = import.meta.env.SCRAPPER_API_PORT || 8000;
-const hostPath = new URL(basePath, `${apiHost}:${apiPort}`).href
+
+let hostPath: string
+if (apiHost) {
+    const apiPort = import.meta.env.SCRAPPER_API_PORT || 80;
+    hostPath = new URL(basePath, `${apiHost}:${apiPort}`).href
+} else hostPath = basePath
+
+
 
 const Config = {
     basePath,
     apiHost,
-    apiPort,
     hostPath,
 };
 console.log(Config)

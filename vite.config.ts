@@ -4,6 +4,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: process.env.SCRAPER_BASE_PATH,
   envPrefix: ["SCRAPER"],
   plugins: [react(), tsconfigPaths()],
 })
