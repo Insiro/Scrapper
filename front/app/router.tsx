@@ -7,12 +7,12 @@ import Config from "@/shared/config";
 // createBrowserRouter를 사용하여 라우터 구성
 const router: RouteObject[] = [
     {
-        path: "/",
+        path: "",
         element: <HomePage />,
         loader: loader.home,
     },
     {
-        path: "/scraps/:scrapId",
+        path: "scraps/:scrapId",
         element: <ScrapDetailPage />,
         loader: loader.scrap,
     },
@@ -22,12 +22,14 @@ const router: RouteObject[] = [
     },
 ];
 
-const rootRouter = createBrowserRouter([
-    {
-        path: Config.basePath,
-        children: router,
-        element: <Layout />,
-    },
-]);
+const rootRouter = createBrowserRouter(
+    [
+        {
+            children: router,
+            element: <Layout />,
+        },
+    ],
+    { basename: "/" + Config.basePath }
+);
 
 export default rootRouter;

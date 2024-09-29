@@ -161,7 +161,7 @@ const ScrapDetail: React.FC<ScrapDetailProps> = ({ scrap, refreshScrap }) => {
                     {scrap.images.map((image) => (
                         <div key={image.id} style={styles.imageWrapper}>
                             <input type="checkbox" style={styles.checkbox} checked={selectedImages.has(image.id)} onChange={() => handleImageSelect(image.id)} />
-                            <img src={`${Config.hostPath}media/${image.file_name}`} alt={image.file_name} style={styles.image} />
+                            <img src={`${Config.hostPath}/media/${image.file_name}`} alt={image.file_name} style={styles.image} />
                         </div>
                     ))}
                 </div>
