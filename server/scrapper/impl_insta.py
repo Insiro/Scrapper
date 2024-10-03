@@ -1,18 +1,25 @@
-from urllib.parse import urlsplit, urlunsplit
+from urllib.parse import SplitResult
 from uuid import uuid4
 
-from server.domain.dto import ScrapCreate
+from server.scrapper.AbsScrapper import ScrapArgs
 from server.utils import download_image, load_soup
 
-from .PageType import PageType
-from .Scrapper import Scrapper
+from .AbsScrapper import AbsScrapper
+from ..domain.PageType import PageType
 
 
-class ImplInsta(Scrapper):
-    async def scrap(self, url):
-        split_url = urlsplit(url)
-        url = urlunsplit((split_url.scheme, split_url.netloc, split_url.path, "", split_url.fragment))
-        soup = await load_soup(url)
+class ImplInsta(AbsScrapper):
+    def __init__(self) -> None:
+        super().__init__()
+        self.pageType = PageType.instagram
+
+    def gen_args(self, url: SplitResult) -> ScrapArgs:
+        args = super().gen_args(url)
+        args.key = url.path.split("/p/")[1].split("/")[0]
+        return args
+
+    async def scrap(self, args):
+        soup = await load_soup(args.url)
 
         meta_list = soup.find_all("meta")
         generator = filter(lambda x: x.get("property") == "instapp:owner_user_id", meta_list)
@@ -37,19 +44,7 @@ class ImplInsta(Scrapper):
             if fname is not None:
                 fname_list.append(fname)
 
-        return ScrapCreate(
-            author_name=name.text,
-            author_tag=use_id,
-            url=url,
-            source=PageType.instagram,
-            image_names=fname_list,
-            content=contentTxt,
-            tags=self.extract_tags(contentTxt),
-        )
-
-    def preprocess_url(self, url: str) -> str:
-        split_url = urlsplit(url)
-        return urlunsplit((split_url.scheme, split_url.netloc, split_url.path, "", split_url.fragment))
+        return self._create_scrap(use_id, name.text, args.key, contentTxt, fname_list)
 
 
 if __name__ == "__main__":

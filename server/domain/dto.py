@@ -3,6 +3,7 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 from .entity import Scrap, Tags
+from .PageType import PageType
 
 
 class URLInput(BaseModel):
@@ -19,7 +20,7 @@ class ScrapModifier(BaseModel):
 
 
 class ScrapCreate(ScrapModifier):
-    url: str
+    source_key: str
     source: str
     image_names: List[str]
 
@@ -41,6 +42,7 @@ class ImageResponse(BaseModel):
 class ScrapResponse(BaseModel):
     id: int
     source: str
+    source_id: str
     url: str
     content: Optional[str]
     author_name: str
@@ -54,11 +56,13 @@ class ScrapResponse(BaseModel):
     def fromScrap(scrap: Scrap, tags: list[Tags] = None):
         if tags is None:
             tags = []
+
         return ScrapResponse(
             id=scrap.id,
-            url=scrap.url,
+            source_id=scrap.source_id,
             content=scrap.content,
             comment=scrap.comment,
+            url=PageType[scrap.source].url(scrap.source_id),
             author_name=scrap.author_name,
             author_tag=scrap.author_tag,
             images=[ImageResponse(id=image.id, file_name=image.file_name) for image in scrap.images],

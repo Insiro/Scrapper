@@ -55,7 +55,6 @@ class ImageRepository:
         images = self.db.query(Image).filter(Image.scrap_id == scrap_id).all()
         for image in images:
             file = path.join(self.media_path, image.file_name)
-            print(file)
             if path.exists(file):
                 remove(file)
 

@@ -27,7 +27,7 @@ export const HomePage: React.FC = () => {
             <ScrapForm onScrapAdd={handleScrapAdd} />
             <ScrapList scraps={scraps.list} />
             <Card>
-                <Link style={{ color: "black", textDecoration: "none" }} to="scraps?page=2">
+                <Link style={{ color: "black", textDecoration: "none" }} to="scraps">
                     <strong style={{ fontSize: "1.2rem", padding: "2rem" }}>more</strong>
                 </Link>
             </Card>

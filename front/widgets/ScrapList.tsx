@@ -27,7 +27,7 @@ const ScrapList: React.FC<ScrapListProps> = ({ scraps }) => {
     return (
         <>
             {scraps.map((scrap) => (
-                <Card key={scrap.id}>
+                <Card key={scrap.id} pin={scrap.pin}>
                     <span style={authorStyle}>
                         {scrap.author_name} (@{scrap.author_tag}){" "}
                     </span>

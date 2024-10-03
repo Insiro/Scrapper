@@ -2,8 +2,9 @@ import { api } from "../../../shared/api";
 import { Scrap } from "../Scrap";
 
 
-export const getScrapList = async (page: number = 1) => {
-    const params = { page, limit: 10 }
+export const getScrapList = async ({ page = 1, pined = false }: { page?: number, pined?: boolean }) => {
+    const params = { page, limit: 10, pined }
+
     const response = await api.get<{ list: Scrap[], count: number }>("scraps", { params });
     return response.data;
 };

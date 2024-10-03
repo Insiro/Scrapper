@@ -1,3 +1,20 @@
 {
-    "cSpell.words": ["autoflush", "drivername", "fastapi", "Hoyolab", "Insta", "instapp", "networkidle", "ondelete", "outerjoin", "pydantic", "rasterizer", "sqlalchemy", "tseslint", "uselist"]
+    "cSpell.words": [
+        "autoflush",
+        "drivername",
+        "fastapi",
+        "hoyo",
+        "Hoyolab",
+        "Insta",
+        "instapp",
+        "networkidle",
+        "ondelete",
+        "outerjoin",
+        "pydantic",
+        "rasterizer",
+        "sqlalchemy",
+        "testid",
+        "tseslint",
+        "uselist"
+    ]
 }

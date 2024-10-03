@@ -19,7 +19,7 @@ export const ScrapListPage: React.FC = () => {
     const [page, setPage] = useState(Number(searchParams.get("page") ?? 1));
 
     useEffect(() => {
-        scrapApi.getScrapList(page).then((it) => {
+        scrapApi.getScrapList({ page }).then((it) => {
             setScraps(it);
             searchParams.set("page", String(page));
             setSearchParams(searchParams);

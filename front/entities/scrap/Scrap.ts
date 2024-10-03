@@ -9,4 +9,6 @@ export interface Scrap {
     images: ScrapImage[];
     comment?: string;
     source?: string;
+    pin: boolean;
+    tags: string[];
 }

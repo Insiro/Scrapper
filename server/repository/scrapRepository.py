@@ -62,9 +62,9 @@ class ScrapRepository:
 
     def get_scraps(self, offset: int = 0, limit: int = 20, pined=False) -> List[Scrap]:
         query = self.db.query(Scrap).outerjoin(Tags)
-        print(offset, limit)
-        if pined:
+        if pined == True:
             query = query.filter(Scrap.pin == True)
+
         return query.order_by(desc(Scrap.id)).offset(offset).limit(limit).all()
 
     def get_scrap(self, scrap_id: int) -> Optional[Scrap]:

@@ -1,5 +1,5 @@
-import { CSSProperties } from "react";
-
+import { CSSProperties, PropsWithChildren } from "react";
+import Pin from "@/shared/assets/pin.png";
 // Card 스타일 객체
 const cardStyle: CSSProperties = {
     marginTop: "1rem",
@@ -12,10 +12,16 @@ const cardStyle: CSSProperties = {
     marginRight: "auto",
 };
 
+interface CardProps {
+    style?: CSSProperties;
+    pin?: boolean;
+}
+
 // Card 컴포넌트 정의
-export const Card: React.FC<{ children: React.ReactNode; style?: CSSProperties }> = ({ children, style, ...props }) => {
+export const Card: React.FC<PropsWithChildren<CardProps>> = ({ children, style, pin, ...props }) => {
     return (
         <div style={{ ...cardStyle, ...(style ?? {}) }} {...props}>
+            {pin && <img style={{ height: "1rem", float: "right", left: "1rem", top: "1rem" }} src={Pin} />}
             {children}
         </div>
     );

@@ -5,5 +5,5 @@ import { scrapApi } from "@/entities/scrap";
 export const scrapListLoader: LoaderFunction = async ({ request }) => {
     const url = new URL(request.url)
     const page = url.searchParams.get("page") ?? 1
-    return await scrapApi.getScrapList(Number(page))
+    return await scrapApi.getScrapList({ page: Number(page) })
 };

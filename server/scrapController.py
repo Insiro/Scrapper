@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from .database import get_db
 from .domain.dto import ImageDelete, ScrapResponse, ScrapUpdate, URLInput
 from .repository import *
-from .scrapper import ScrapperFactory  # Scrapper 클래스 임포트
+from .scrapper import Scrapper
 from .utils import config
 
 router = APIRouter()
@@ -18,27 +18,25 @@ class ScrapAPIController:
         self,
         repo: ScrapRepository,
         img_repo: ImageRepository,
-        scrapper: ScrapperFactory,
         logger: logging.Logger,
         cache: Dict[str, Any],
     ):
         self.repo = repo
         self.img_repo = img_repo
-        self.scrapper = scrapper
         self.logger = logger
         self.cache = cache
 
     async def parse_url(self, url_input: URLInput):
         self.logger.info(f"Parsing URL: {url_input.url}")
 
-        scrapper = self.scrapper.getInstance(url_input.url)
-        url = scrapper.preprocess_url(url_input.url)
+        scrapper = Scrapper(url_input.url)
+        url = scrapper.url
 
         if (existing_scrap := self.repo.get_scrap_by_url(url)) is not None:
             return ScrapResponse.fromScrap(existing_scrap)
 
         # Scrapper를 사용하여 데이터 가져오기
-        data = await scrapper.scrap(url)
+        data = await scrapper.scrap()
         scrap = self.repo.create_scrap(data)
         self.img_repo.save_images(data.image_names, scrap.id)
 
@@ -47,9 +45,8 @@ class ScrapAPIController:
 
     async def re_scrap(self, scrap_id: int):
         existing_scrap = self.repo.get_scrap(scrap_id)
-        scrapper = self.scrapper.getInstance(type_name=existing_scrap.source)
-        url = scrapper.preprocess_url(existing_scrap.url)
-        data = await scrapper.scrap(url)
+        scrapper = Scrapper(existing_scrap.url, type=existing_scrap.source)
+        data = await scrapper.scrap()
         scrap = self.repo.update_scrap(existing_scrap, data)
 
         self.img_repo.delete_images_by_scrap(scrap.id)
@@ -109,10 +106,9 @@ class ScrapAPIController:
 # Dependency
 def get_scrap_api_controller(
     db: Session = Depends(get_db),
-    scrapper: ScrapperFactory = Depends(ScrapperFactory),
     logger: logging.Logger = Depends(lambda: logging.getLogger("api")),
     cache: Dict[str, Any] = Depends(lambda: {}),
 ) -> ScrapAPIController:
     repo = ScrapRepository(db=db)
     img_repo = ImageRepository(db=db, config=config)
-    return ScrapAPIController(repo=repo, img_repo=img_repo, scrapper=scrapper, logger=logger, cache=cache)
+    return ScrapAPIController(repo=repo, img_repo=img_repo, logger=logger, cache=cache)

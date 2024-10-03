@@ -1,19 +1,29 @@
-from urllib.parse import urlsplit, urlunsplit
+from urllib.parse import SplitResult
 from uuid import uuid4
 
-from server.domain.dto import ScrapCreate
+from server.scrapper.AbsScrapper import ScrapArgs
 from server.utils import download_image, load_soup
 
-from .PageType import PageType
-from .Scrapper import Scrapper
+from .AbsScrapper import AbsScrapper
+from ..domain.PageType import PageType
 
 
-class ImplTwitter(Scrapper):
-    async def scrap(self, url):
-        split_url = urlsplit(url)
-        url = urlunsplit((split_url.scheme, split_url.netloc, split_url.path, "", split_url.fragment))
+class ImplTwitter(AbsScrapper):
+    def __init__(self) -> None:
+        super().__init__()
+        self.pageType = PageType.twitter
 
-        soup = await load_soup(url)
+    def gen_args(self, url: SplitResult) -> ScrapArgs:
+        args = super().gen_args(url)
+        path = url.path
+        if path.startswith("/"):
+            path = path[1:]
+        if path.endswith("/"):
+            path = path[:-1]
+        args.key = path
+
+    async def scrap(self, args):
+        soup = await load_soup(args.url)
         article = soup.find("article")
         author = article.find("div", {"data-testid": "User-Name"}).find_all("a")
         wrapper = article.find("div").find("div").find_all("div", recursive=False)[2]
@@ -31,19 +41,7 @@ class ImplTwitter(Scrapper):
             if fname is not None:
                 fname_list.append(fname)
 
-        return ScrapCreate(
-            author_name=name,
-            author_tag=tag,
-            url=url,
-            source=PageType.twitter,
-            image_names=fname_list,
-            content=contentTxt,
-            tags=self.extract_tags(content.text),
-        )
-
-    def preprocess_url(self, url: str) -> str:
-        split_url = urlsplit(url)
-        return urlunsplit((split_url.scheme, split_url.netloc, split_url.path, "", split_url.fragment))
+        return self._create_scrap(tag, name, args.key, contentTxt, fname_list)
 
 
 if __name__ == "__main__":

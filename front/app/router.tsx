@@ -10,7 +10,7 @@ const router: RouteObject[] = [
     {
         path: "",
         element: <HomePage />,
-        loader: loader.list,
+        loader: loader.home,
     },
     {
         path: "scraps",

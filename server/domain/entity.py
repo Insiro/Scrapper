@@ -18,10 +18,11 @@ from server.database import Base
 
 class Scrap(Base):
     __tablename__ = "scraps"
+    __table_args__ = (UniqueConstraint("source_id", "source"),)
 
     id = Column(Integer, primary_key=True, index=True)
-    url = Column(String(255), unique=True, index=True)
     pin = Column(Boolean, default=False, index=True)
+    source_id = Column(String(255), unique=True, index=True)
 
     source = Column(String(50))
     content = Column(Text, nullable=True)
@@ -29,9 +30,6 @@ class Scrap(Base):
     author_tag = Column(String(100))
     images: Mapped[List["Image"]] = relationship("Image", back_populates="scrap", uselist=True)
     comment = Column(String(255), nullable=True)
-
-    def __repr__(self):
-        return f"<Scrap(id={self.id}, url={self.url}, author_info={self.author_name}@{self.author_tag})>"
 
 
 class Image(Base):

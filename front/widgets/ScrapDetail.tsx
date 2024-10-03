@@ -141,16 +141,22 @@ const ScrapDetail: React.FC<ScrapDetailProps> = ({ scrap, refreshScrap }) => {
 
     return (
         <>
-            <Card>
+            <Card pin={scrap.pin}>
                 <h2>Content</h2>
                 <div style={isSmallScreen ? { ...styles.contentContainer, display: "block" } : { ...styles.contentContainer }}>
                     <ContentLine title="Source">
-                        <a style={{ wordBreak: "break-all" }} href={scrap.url}>
+                        <a style={{ wordBreak: "break-all" }} href={scrap.url} target="_blank">
                             {scrap.source} : {scrap.url}
                         </a>
                     </ContentLine>
                     <ContentLine title="Author" content={`${scrap.author_name} (@${scrap.author_tag})`} />
+                    <ContentLine title="Tag">
+                        {scrap.tags.map((it) => (
+                            <span style={{ margin: "0.5rem" }}>#{it}</span>
+                        ))}
+                    </ContentLine>
                     <ContentLine title="Content" content={scrap.content} />
+
                     {scrap.comment && <ContentLine title="Comment" content={scrap.comment} />}
                 </div>
             </Card>
