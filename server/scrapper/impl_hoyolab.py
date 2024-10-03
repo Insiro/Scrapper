@@ -41,7 +41,7 @@ class ImplHoyolab(Scrapper):
             fname = download_image(img, f"{uuid4()}")
             if fname is not None:
                 fname_list.append(fname)
-        print(f"{title}\n{content}")
+
         return ScrapCreate(
             author_name=userData["nickname"],
             author_tag=userData["uid"],
@@ -49,6 +49,7 @@ class ImplHoyolab(Scrapper):
             source=PageType.hoyolab,
             image_names=fname_list,
             content=f"{title}\n{content}",
+            tags=self.extract_tags(content),
         )
 
     def preprocess_url(self, url: str) -> str:

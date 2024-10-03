@@ -42,7 +42,8 @@ class ScrapAPIController:
         scrap = self.repo.create_scrap(data)
         self.img_repo.save_images(data.image_names, scrap.id)
 
-        return ScrapResponse.fromScrap(scrap)
+        tags = self.repo.get_tags(scrap_id=scrap.id)
+        return ScrapResponse.fromScrap(scrap, tags)
 
     async def re_scrap(self, scrap_id: int):
         existing_scrap = self.repo.get_scrap(scrap_id)
@@ -54,12 +55,20 @@ class ScrapAPIController:
         self.img_repo.delete_images_by_scrap(scrap.id)
         self.img_repo.save_images(data.image_names, scrap.id)
 
-        return ScrapResponse.fromScrap(scrap)
+        tags = self.repo.get_tags(scrap_id=scrap_id)
 
-    async def list_scraps(self, page: int = 1, limit: int = 20):
-        scraps = self.repo.get_scraps(page=page, limit=limit)
+        return ScrapResponse.fromScrap(scrap, tags)
+
+    async def list_scraps(self, offset=0, limit: int = 20, pined=False):
+        scraps = self.repo.get_scraps(offset=offset, limit=limit, pined=pined)
         count = self.repo.count_scrap()
-        return {"list": [ScrapResponse.fromScrap(scrap) for scrap in scraps], "count": count}
+
+        scrapReturns = []
+        for scrap in scraps:
+            tags = self.repo.get_tags(scrap_id=scrap.id)
+            scrapReturns.append(ScrapResponse.fromScrap(scrap, tags=tags))
+
+        return {"list": scrapReturns, "count": count}
 
     async def delete_scrap(self, scrap_id: int):
         if (scrap := self.repo.delete_scrap(scrap_id)) is None:
@@ -76,13 +85,15 @@ class ScrapAPIController:
         scrap = self.repo.update(scrap, update_scrap)
         self.img_repo.delete_images(*update_scrap.delete_images)
 
-        return scrap
+        tags = self.repo.get_tags(scrap_id=scrap_id)
+        return ScrapResponse.fromScrap(scrap, tags)
 
     async def get_scrap_details(self, scrap_id: int):
         if (scrap := self.repo.get_scrap(scrap_id)) is None:
             raise HTTPException(status_code=404, detail="Scrap not found")
 
-        return ScrapResponse.fromScrap(scrap)
+        tags = self.repo.get_tags(scrap_id=scrap_id)
+        return ScrapResponse.fromScrap(scrap, tags)
 
     async def delete_image(self, image_id: int):
         if (images := self.img_repo.get_image(image_id)) is None:

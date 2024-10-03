@@ -20,6 +20,7 @@ class ImplTwitter(Scrapper):
         img_list = wrapper.find_all("img", recursive=True)
 
         content = wrapper.find("div").find("div").find("div")
+        contentTxt: str = content.text
 
         name = author[0].get_text()
         tag = author[1].get_text()
@@ -29,13 +30,15 @@ class ImplTwitter(Scrapper):
             fname = download_image(img.get("src"), f"{uuid4()}")
             if fname is not None:
                 fname_list.append(fname)
+
         return ScrapCreate(
             author_name=name,
             author_tag=tag,
             url=url,
             source=PageType.twitter,
             image_names=fname_list,
-            content=content.text,
+            content=contentTxt,
+            tags=self.extract_tags(content.text),
         )
 
     def preprocess_url(self, url: str) -> str:

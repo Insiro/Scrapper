@@ -436,3 +436,5 @@ storage/
 !front/**/lib/
 !server/**/lib/
 *.db
+.env.temp
+.env.temp*

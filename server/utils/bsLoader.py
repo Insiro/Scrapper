@@ -4,25 +4,17 @@ from playwright.async_api import async_playwright
 IMAGE_EXTENSIONS = (".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg")
 
 
-# 네트워크 요청을 필터링하는 함수
-def filter_requests(block_urls: list[str] = None):
-    # 요청 URL이 이미지 파일 확장자 중 하나로 끝나는지 확인
-    async def filter(route, request):
-        req: str = request.url
-        if any(req.endswith(ext) for ext in IMAGE_EXTENSIONS):
-            return await route.abort()
+async def filter_requests(route, request):
+    req: str = request.url
+    if any(req.endswith(ext) for ext in IMAGE_EXTENSIONS):
+        return await route.abort()
 
-        if block_urls is not None and any(req.startswith(url) for url in block_urls):
-            return await route.abort()
-
-        await route.continue_()
-
-    return filter
+    await route.continue_()
 
 
 async def load_soup(url, block_urls: list[str] = None):
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True, slow_mo=0, args=["--disable-software-rasterizer"])
+        browser = await p.chromium.launch(headless=False, slow_mo=0, args=["--disable-software-rasterizer"])
         context = await browser.new_context(bypass_csp=True)
         page = await context.new_page()
         await page.set_viewport_size({"width": 2560, "height": 1440})
@@ -31,14 +23,16 @@ async def load_soup(url, block_urls: list[str] = None):
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
             }
         )
-        await page.route("**/*", filter_requests(block_urls))
+
+        if block_urls:
+            await page.route(block_urls + "*", filter_requests)
+        await page.route("**/*", filter_requests)
 
         await page.goto(url)
         await page.wait_for_load_state("networkidle")
-        await page.wait_for_selector("#root .some-react-component", timeout=5000)
 
         content = await page.content()
-        print(content)
+
         close = browser.close()
         soup = BeautifulSoup(content, features="html.parser")
         await close

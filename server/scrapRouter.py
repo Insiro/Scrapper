@@ -21,16 +21,11 @@ async def parse_url(
 async def list_scraps(
     page: int = 1,
     limit: int = 20,
+    pined=False,
     controller: ScrapAPIController = Depends(get_scrap_api_controller),
 ):
-    return await controller.list_scraps(page=page, limit=limit)
-
-
-@router.get("/scraps/count", response_model=int)
-async def list_scraps(
-    controller: ScrapAPIController = Depends(get_scrap_api_controller),
-):
-    return await controller.count_scraps()
+    offset = (page - 1) * limit
+    return await controller.list_scraps(offset=offset, limit=limit, pined=pined)
 
 
 @router.delete("/scraps/{scrap_id}", response_model=ScrapResponse)

@@ -4,12 +4,17 @@ from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
 from ..domain.dto import ScrapCreate, ScrapUpdate
-from ..domain.entity import Scrap
+from ..domain.entity import Scrap, Tags
 
 
 class ScrapRepository:
     def __init__(self, db: Session):
         self.db = db
+
+    def put_tag(self, scrap_id, tagList: list[str]):
+        self.db.query(Tags).filter(Tags.scrap_id == scrap_id).delete()
+        tags = [Tags(scrap_id=scrap_id, name=tag) for tag in tagList]
+        self.db.add_all(tags)
 
     def create_scrap(self, scrap_data: ScrapCreate) -> Scrap:
         db_scrap = Scrap(
@@ -24,7 +29,9 @@ class ScrapRepository:
         self.db.commit()
         self.db.refresh(db_scrap)
 
-        self.db.commit()
+        if scrap_data.tags is not None:
+            self.put_tag(db_scrap.id, scrap_data.tags)
+
         return db_scrap
 
     def update_scrap(self, scrap: Scrap, scrap_data: ScrapUpdate) -> Scrap:
@@ -36,17 +43,29 @@ class ScrapRepository:
             scrap.content = scrap_data.content
         if scrap_data.comment is not None:
             scrap.comment = scrap_data.comment
+        if scrap_data.pin is not None:
+            scrap.pin = scrap_data.pin
+
+        if scrap_data.tags is not None:
+            self.put_tag(scrap.id, scrap_data.tags)
 
         self.db.commit()
         self.db.refresh(scrap)
+
+        if scrap_data.tags is not None:
+            self.put_tag(scrap.id, scrap_data.tags)
+
         return scrap
 
     def get_scrap_by_url(self, url: str) -> Optional[Scrap]:
         return self.db.query(Scrap).filter(Scrap.url == url).first()
 
-    def get_scraps(self, page: int = 1, limit: int = 20) -> List[Scrap]:
-        page = page - 1
-        return self.db.query(Scrap).order_by(desc(Scrap.id)).offset(page * limit).limit(page * limit + limit).all()
+    def get_scraps(self, offset: int = 0, limit: int = 20, pined=False) -> List[Scrap]:
+        query = self.db.query(Scrap).outerjoin(Tags)
+        print(offset, limit)
+        if pined:
+            query = query.filter(Scrap.pin == True)
+        return query.order_by(desc(Scrap.id)).offset(offset).limit(limit).all()
 
     def get_scrap(self, scrap_id: int) -> Optional[Scrap]:
         return self.db.query(Scrap).filter(Scrap.id == scrap_id).first()
@@ -64,3 +83,11 @@ class ScrapRepository:
         self.db.delete(scrap)
         self.db.commit()
         return scrap
+
+    def get_tags(self, scrap_id: int = None, tag_name: str = None):
+        query = self.db.query(Tags)
+        if scrap_id is not None:
+            query = query.filter_by(scrap_id=scrap_id)
+        if tag_name is not None:
+            query = query.filter_by(tag_name=tag_name)
+        return query.distinct(tag_name).all()

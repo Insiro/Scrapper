@@ -29,6 +29,8 @@ class ImplInsta(Scrapper):
         content = wrapper[1].find("section").find_next_siblings("div")[0]
         content = content.find("ul").find("div").find("div").find("h2").next_sibling
 
+        contentTxt = content.text
+
         fname_list = []
         for src in img_src_list:
             fname = download_image(src, f"{uuid4()}")
@@ -41,7 +43,8 @@ class ImplInsta(Scrapper):
             url=url,
             source=PageType.instagram,
             image_names=fname_list,
-            content=content.text,
+            content=contentTxt,
+            tags=self.extract_tags(contentTxt),
         )
 
     def preprocess_url(self, url: str) -> str:
