@@ -23,7 +23,7 @@ const Layout: React.FC = () => {
         <div style={layoutStyles.container}>
             <main style={layoutStyles.content}>
                 <PageTitle />
-                <Outlet context={{ setPageTitle }} /> {/* Outlet에 상태 업데이트 함수 전달 */}
+                <Outlet context={{ setPageTitle }} />
             </main>
         </div>
     );

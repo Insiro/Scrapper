@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
 from ..domain.dto import ScrapCreate, ScrapUpdate
@@ -17,7 +18,7 @@ class ScrapRepository:
             author_tag=scrap_data.author_tag,
             source=scrap_data.source,
             content=scrap_data.content,
-            comment =scrap_data.comment
+            comment=scrap_data.comment,
         )
         self.db.add(db_scrap)
         self.db.commit()
@@ -43,11 +44,15 @@ class ScrapRepository:
     def get_scrap_by_url(self, url: str) -> Optional[Scrap]:
         return self.db.query(Scrap).filter(Scrap.url == url).first()
 
-    def get_scraps(self, skip: int = 0, limit: int = 10) -> List[Scrap]:
-        return self.db.query(Scrap).offset(skip).limit(limit).all()
+    def get_scraps(self, page: int = 1, limit: int = 20) -> List[Scrap]:
+        page = page - 1
+        return self.db.query(Scrap).order_by(desc(Scrap.id)).offset(page * limit).limit(page * limit + limit).all()
 
     def get_scrap(self, scrap_id: int) -> Optional[Scrap]:
         return self.db.query(Scrap).filter(Scrap.id == scrap_id).first()
+
+    def count_scrap(self) -> int:
+        return self.db.query(Scrap).count()
 
     def delete_scrap(self, scrap_id: int) -> Optional[Scrap]:
         scrap = self.db.query(Scrap).filter(Scrap.id == scrap_id).first()

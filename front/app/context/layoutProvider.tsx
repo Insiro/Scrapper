@@ -15,7 +15,7 @@ export const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
 
     return (
         <SmallScreenContext.Provider value={isSmallScreen}>
-            <TitleContext.Provider value={{ pageTitle, setPageTitle }}> {children} </TitleContext.Provider>)
+            <TitleContext.Provider value={{ pageTitle, setPageTitle }}> {children} </TitleContext.Provider>
         </SmallScreenContext.Provider>
     );
 };

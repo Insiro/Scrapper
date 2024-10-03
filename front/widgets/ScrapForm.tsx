@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState } from "react";
+import React, { CSSProperties, PropsWithChildren, useState } from "react";
 import { Scrap } from "@/entities/scrap";
 import { Button } from "./Common/Button";
 import { scrapApi } from "@/entities/scrap";
@@ -10,7 +10,7 @@ interface ScrapFormProps {
     onScrapAdd: (scrap: Scrap) => void;
 }
 
-const ScrapForm: React.FC<ScrapFormProps> = ({ onScrapAdd }) => {
+const ScrapForm: React.FC<PropsWithChildren<ScrapFormProps>> = ({ onScrapAdd, children }) => {
     const [url, setUrl] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
     const isSmallScreen = useIsSmallScreen();
@@ -28,6 +28,7 @@ const ScrapForm: React.FC<ScrapFormProps> = ({ onScrapAdd }) => {
 
     // 스타일 정의
     const formStyle = {
+        margin: "0.5rem",
         display: "flex",
         alignItems: "center", // 입력 필드와 버튼을 수직 가운데 정렬
         gap: "1rem", // 입력 필드와 버튼 사이의 간격 추가
@@ -49,12 +50,15 @@ const ScrapForm: React.FC<ScrapFormProps> = ({ onScrapAdd }) => {
     };
 
     return (
-        <Card style={isSmallScreen ? { ...formStyle, display: "block" } : { ...formStyle }}>
-            {error && <p style={errorStyle}>{error}</p>}
-            <input type="text" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="Enter URL to scrap" style={inputStyle} />
-            <Button backgroundColor={color.blue} onClick={handleSubmit} style={{ height: "40px" }}>
-                Scrap URL
-            </Button>
+        <Card>
+            <div style={isSmallScreen ? { ...formStyle, display: "block" } : { ...formStyle }}>
+                {error && <p style={errorStyle}>{error}</p>}
+                <input type="text" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="Enter URL to scrap" style={inputStyle} />
+                <Button backgroundColor={color.blue} onClick={handleSubmit} style={{ height: "40px" }}>
+                    Scrap URL
+                </Button>
+            </div>
+            {children}
         </Card>
     );
 };

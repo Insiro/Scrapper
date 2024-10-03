@@ -56,9 +56,10 @@ class ScrapAPIController:
 
         return ScrapResponse.fromScrap(scrap)
 
-    async def list_scraps(self, skip: int = 0, limit: int = 10):
-        scraps = self.repo.get_scraps(skip=skip, limit=limit)
-        return [ScrapResponse.fromScrap(scrap) for scrap in scraps]
+    async def list_scraps(self, page: int = 1, limit: int = 20):
+        scraps = self.repo.get_scraps(page=page, limit=limit)
+        count = self.repo.count_scrap()
+        return {"list": [ScrapResponse.fromScrap(scrap) for scrap in scraps], "count": count}
 
     async def delete_scrap(self, scrap_id: int):
         if (scrap := self.repo.delete_scrap(scrap_id)) is None:
@@ -103,6 +104,4 @@ def get_scrap_api_controller(
 ) -> ScrapAPIController:
     repo = ScrapRepository(db=db)
     img_repo = ImageRepository(db=db, config=config)
-    return ScrapAPIController(
-        repo=repo, img_repo=img_repo, scrapper=scrapper, logger=logger, cache=cache
-    )
+    return ScrapAPIController(repo=repo, img_repo=img_repo, scrapper=scrapper, logger=logger, cache=cache)

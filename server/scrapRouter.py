@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Literal
 
 from fastapi import APIRouter, Depends
 
@@ -17,13 +17,20 @@ async def parse_url(
     return await controller.parse_url(url_input)
 
 
-@router.get("/scraps", response_model=List[ScrapResponse])
+@router.get("/scraps", response_model=dict[Literal["list", "count"], List[ScrapResponse] | int])
 async def list_scraps(
-    skip: int = 0,
-    limit: int = 10,
+    page: int = 1,
+    limit: int = 20,
     controller: ScrapAPIController = Depends(get_scrap_api_controller),
 ):
-    return await controller.list_scraps(skip=skip, limit=limit)
+    return await controller.list_scraps(page=page, limit=limit)
+
+
+@router.get("/scraps/count", response_model=int)
+async def list_scraps(
+    controller: ScrapAPIController = Depends(get_scrap_api_controller),
+):
+    return await controller.count_scraps()
 
 
 @router.delete("/scraps/{scrap_id}", response_model=ScrapResponse)
