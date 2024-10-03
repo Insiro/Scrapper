@@ -3,6 +3,8 @@ from typing import List, Optional
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
+from server.domain.PageType import PageType
+
 from ..domain.dto import ScrapCreate, ScrapUpdate
 from ..domain.entity import Scrap, Tags
 
@@ -18,7 +20,7 @@ class ScrapRepository:
 
     def create_scrap(self, scrap_data: ScrapCreate) -> Scrap:
         db_scrap = Scrap(
-            url=scrap_data.url,
+            source_id=scrap_data.source_key,
             author_name=scrap_data.author_name,
             author_tag=scrap_data.author_tag,
             source=scrap_data.source,
@@ -57,8 +59,8 @@ class ScrapRepository:
 
         return scrap
 
-    def get_scrap_by_url(self, url: str) -> Optional[Scrap]:
-        return self.db.query(Scrap).filter(Scrap.url == url).first()
+    def get_scrap_by_url(self, pageType: PageType, source_id) -> Optional[Scrap]:
+        return self.db.query(Scrap).filter_by(source_id=source_id, source=pageType).first()
 
     def get_scraps(self, offset: int = 0, limit: int = 20, pined=False) -> List[Scrap]:
         query = self.db.query(Scrap).outerjoin(Tags)

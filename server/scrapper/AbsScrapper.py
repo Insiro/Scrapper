@@ -9,6 +9,10 @@ class ScrapArgs:
     url: str
     key: str
 
+    def __init__(self, url, key=None) -> None:
+        self.url = url
+        self.key = key
+
 
 class AbsScrapper(metaclass=ABCMeta):
     pageType: PageType = None

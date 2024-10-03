@@ -9,8 +9,8 @@ from bs4 import BeautifulSoup
 from server.utils import download_image
 from server.utils.constant import USER_AGENT
 
-from .AbsScrapper import AbsScrapper
 from ..domain.PageType import PageType
+from .AbsScrapper import AbsScrapper
 
 
 class ImplHoyolab(AbsScrapper):
@@ -20,7 +20,7 @@ class ImplHoyolab(AbsScrapper):
 
     def gen_args(self, url: SplitResult):
         args = super().gen_args(url)
-        args.key = url.path.split("article")[-1]
+        args.key = url.path.split("article")[-1][1:]
         return args
 
     async def scrap(self, args):

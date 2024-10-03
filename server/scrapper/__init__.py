@@ -1,11 +1,11 @@
 from typing import Optional
 from urllib.parse import SplitResult, urlsplit
 
+from server.domain.PageType import PageType
 from .AbsScrapper import AbsScrapper
 from .impl_hoyolab import ImplHoyolab, ImplHoyoLink
 from .impl_insta import ImplInsta
 from .impl_twitter import ImplTwitter
-from ..domain.PageType import PageType
 
 
 class Scrapper(AbsScrapper):
@@ -33,17 +33,16 @@ class Scrapper(AbsScrapper):
             case PageType.instagram:
                 self.instance = ImplInsta()
         self.__url = self.instance.preprocess_url(url)
+        self.args = self.instance.gen_args(self.__url)
 
     def preprocess_url(self, url: str):
         return self.instance.preprocess_url(url)
 
     def scrap(self, url: str = None):
-        spited = None
-        if url is None:
-            spited = self.__url
-        else:
+        args = self.args
+        if url is not None:
             spited = self.instance.preprocess_url(url)
-        args = self.instance.gen_args(spited)
+            args = self.instance.gen_args(spited)
         return self.instance.scrap(args)
 
     @property

@@ -30,9 +30,8 @@ class ScrapAPIController:
         self.logger.info(f"Parsing URL: {url_input.url}")
 
         scrapper = Scrapper(url_input.url)
-        url = scrapper.url
 
-        if (existing_scrap := self.repo.get_scrap_by_url(url)) is not None:
+        if (existing_scrap := self.repo.get_scrap_by_url(scrapper.pageType, scrapper.args.key)) is not None:
             return ScrapResponse.fromScrap(existing_scrap)
 
         # Scrapper를 사용하여 데이터 가져오기

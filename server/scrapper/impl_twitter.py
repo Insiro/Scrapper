@@ -4,8 +4,8 @@ from uuid import uuid4
 from server.scrapper.AbsScrapper import ScrapArgs
 from server.utils import download_image, load_soup
 
-from .AbsScrapper import AbsScrapper
 from ..domain.PageType import PageType
+from .AbsScrapper import AbsScrapper
 
 
 class ImplTwitter(AbsScrapper):
@@ -21,6 +21,7 @@ class ImplTwitter(AbsScrapper):
         if path.endswith("/"):
             path = path[:-1]
         args.key = path
+        return args
 
     async def scrap(self, args):
         soup = await load_soup(args.url)
