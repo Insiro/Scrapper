@@ -1,16 +1,15 @@
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, Self
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from .database import get_db
-from .domain.dto import ImageDelete, ScrapResponse, ScrapUpdate, URLInput
-from .repository import *
-from .scrapper import Scrapper
-from .utils import config
-
-router = APIRouter()
+from server.database import get_db
+from server.domain.dto.image import ImageDelete
+from server.domain.dto.scrap import ScrapResponse, ScrapUpdate, URLInput
+from server.repository import *
+from server.scrapper import Scrapper
+from server.utils import config
 
 
 class ScrapAPIController:
@@ -101,13 +100,12 @@ class ScrapAPIController:
 
         return result
 
-
-# Dependency
-def get_scrap_api_controller(
-    db: Session = Depends(get_db),
-    logger: logging.Logger = Depends(lambda: logging.getLogger("api")),
-    cache: Dict[str, Any] = Depends(lambda: {}),
-) -> ScrapAPIController:
-    repo = ScrapRepository(db=db)
-    img_repo = ImageRepository(db=db, config=config)
-    return ScrapAPIController(repo=repo, img_repo=img_repo, logger=logger, cache=cache)
+    @staticmethod
+    def depends(
+        db: Session = Depends(get_db),
+        logger: logging.Logger = Depends(lambda: logging.getLogger("api")),
+        cache: Dict[str, Any] = Depends(lambda: {}),
+    ) -> Self:
+        repo = ScrapRepository(db=db)
+        img_repo = ImageRepository(db=db, config=config)
+        return ScrapAPIController(repo=repo, img_repo=img_repo, logger=logger, cache=cache)

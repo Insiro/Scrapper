@@ -43,13 +43,13 @@ class Image(Base):
 
 
 class ExportMode(enum.Enum):
-    FULL = ("FULL",)
-    IMG = ("IMG",)
+    FULL = "FULL"
+    IMG = "IMG"
     TXT = "TXT"
 
 
-class Export(Base):
-    __tablename__ = "export"
+class Exporter(Base):
+    __tablename__ = "exporter"
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(255))
     mode: Enum = Enum(ExportMode, metadata=Base.metadata, validate_strings=True)

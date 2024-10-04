@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from urllib.parse import SplitResult, urlsplit, urlunsplit
 
-from server.domain.dto import ScrapCreate
+from server.domain.dto.scrap import ScrapCreate
 from server.domain.PageType import PageType
 
 

@@ -2,8 +2,10 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
-from .entity import Scrap, Tags
-from .PageType import PageType
+from server.domain.dto.image import ImageResponse
+
+from ..entity import Scrap, Tags
+from ..PageType import PageType
 
 
 class URLInput(BaseModel):
@@ -28,15 +30,6 @@ class ScrapCreate(ScrapModifier):
 class ScrapUpdate(ScrapModifier):
     delete_images: list[int]
     new_images: list[int]
-
-
-class ImageDelete(BaseModel):
-    images: List[int]
-
-
-class ImageResponse(BaseModel):
-    id: int
-    file_name: str
 
 
 class ScrapResponse(BaseModel):

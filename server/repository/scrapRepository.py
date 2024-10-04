@@ -3,10 +3,9 @@ from typing import List, Optional
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
+from server.domain.dto.scrap import ScrapCreate, ScrapUpdate
+from server.domain.entity import Scrap, Tags
 from server.domain.PageType import PageType
-
-from ..domain.dto import ScrapCreate, ScrapUpdate
-from ..domain.entity import Scrap, Tags
 
 
 class ScrapRepository:
