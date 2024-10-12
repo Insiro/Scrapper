@@ -1,2 +1,2 @@
-from exporterController import *
-from scrapController import *
+from .exporterController import *
+from .scrapController import *

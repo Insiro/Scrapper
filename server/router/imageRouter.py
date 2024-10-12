@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from server.controller.scrapController import ScrapAPIController
-from server.domain.dto.scrap import ImageDelete
+from server.domain.dto.image import ImageDelete
 
 image_router = APIRouter()
 

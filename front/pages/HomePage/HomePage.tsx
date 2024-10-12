@@ -17,9 +17,11 @@ export const HomePage: React.FC = () => {
     const [scraps, setScraps] = useState(preloadedScraps);
 
     const handleScrapAdd = (newScrap: Scrap) => {
-        scraps.list = [newScrap, ...scraps.list];
-        scraps.count += 1;
-        setScraps(scraps);
+        const newScrapList = {
+            list: [newScrap, ...scraps.list],
+            count: scraps.count + 1,
+        };
+        setScraps(newScrapList);
     };
 
     return (
