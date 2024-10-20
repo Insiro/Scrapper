@@ -16,5 +16,6 @@
         "testid",
         "tseslint",
         "uselist"
-    ]
+    ],
+    "prettier.semi": true
 }

@@ -53,7 +53,13 @@ const ScrapForm: React.FC<PropsWithChildren<ScrapFormProps>> = ({ onScrapAdd, ch
         <Card>
             <div style={isSmallScreen ? { ...formStyle, display: "block" } : { ...formStyle }}>
                 {error && <p style={errorStyle}>{error}</p>}
-                <input type="text" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="Enter URL to scrap" style={inputStyle} />
+                <input
+                    type="text"
+                    value={url}
+                    onChange={(e) => setUrl(e.target.value)}
+                    placeholder="Enter URL to scrap"
+                    style={inputStyle}
+                />
                 <Button backgroundColor={color.blue} onClick={handleSubmit} style={{ height: "40px" }}>
                     Scrap URL
                 </Button>

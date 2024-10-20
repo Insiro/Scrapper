@@ -49,7 +49,11 @@ const ConfirmModal: React.FC<ModalProps> = ({ isOpen, title, message, action, di
                     <Button onClick={() => action(false)} style={{ backgroundColor: color.gray1 }} disabled={disabled}>
                         Cancel
                     </Button>
-                    <Button onClick={() => action(true)} style={{ backgroundColor: color.red, color: "#fff" }} disabled={disabled}>
+                    <Button
+                        onClick={() => action(true)}
+                        style={{ backgroundColor: color.red, color: "#fff" }}
+                        disabled={disabled}
+                    >
                         Confirm
                     </Button>
                 </div>

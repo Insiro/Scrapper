@@ -1,1 +1,1 @@
-export { useTitleContext } from "./lib/useTitleContext"
+export { useTitleContext } from "./lib/useTitleContext";

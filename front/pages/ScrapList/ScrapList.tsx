@@ -36,7 +36,12 @@ export const ScrapListPage: React.FC = () => {
         <div style={{ textAlign: "center" }}>
             <ScrapForm onScrapAdd={handleScrapAdd} />
             <ScrapList scraps={scraps.list} />
-            <PageNation totalPage={Math.floor(scraps.count / 10) + 1} visiblePage={10} current={page} setPage={setPage} />
+            <PageNation
+                totalPage={Math.floor(scraps.count / 10) + 1}
+                visiblePage={10}
+                current={page}
+                setPage={setPage}
+            />
         </div>
     );
 };

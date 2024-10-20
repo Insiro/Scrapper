@@ -143,7 +143,13 @@ const ScrapDetail: React.FC<ScrapDetailProps> = ({ scrap, refreshScrap }) => {
         <>
             <Card pin={scrap.pin}>
                 <h2>Content</h2>
-                <div style={isSmallScreen ? { ...styles.contentContainer, display: "block" } : { ...styles.contentContainer }}>
+                <div
+                    style={
+                        isSmallScreen
+                            ? { ...styles.contentContainer, display: "block" }
+                            : { ...styles.contentContainer }
+                    }
+                >
                     <ContentLine title="Source">
                         <a style={{ wordBreak: "break-all" }} href={scrap.url} target="_blank">
                             {scrap.source} : {scrap.url}
@@ -163,11 +169,26 @@ const ScrapDetail: React.FC<ScrapDetailProps> = ({ scrap, refreshScrap }) => {
             <Card style={{ marginTop: "1rem" }}>
                 <h2>Images</h2>
 
-                <div style={isSmallScreen ? { ...styles.imageContainer, gridTemplateColumns: "repeat(1, 1fr)" } : styles.imageContainer}>
+                <div
+                    style={
+                        isSmallScreen
+                            ? { ...styles.imageContainer, gridTemplateColumns: "repeat(1, 1fr)" }
+                            : styles.imageContainer
+                    }
+                >
                     {scrap.images.map((image) => (
                         <div key={image.id} style={styles.imageWrapper}>
-                            <input type="checkbox" style={styles.checkbox} checked={selectedImages.has(image.id)} onChange={() => handleImageSelect(image.id)} />
-                            <img src={`${Config.hostPath}/media/${image.file_name}`} alt={image.file_name} style={styles.image} />
+                            <input
+                                type="checkbox"
+                                style={styles.checkbox}
+                                checked={selectedImages.has(image.id)}
+                                onChange={() => handleImageSelect(image.id)}
+                            />
+                            <img
+                                src={`${Config.hostPath}/media/${image.file_name}`}
+                                alt={image.file_name}
+                                style={styles.image}
+                            />
                         </div>
                     ))}
                 </div>
@@ -179,8 +200,19 @@ const ScrapDetail: React.FC<ScrapDetailProps> = ({ scrap, refreshScrap }) => {
                 <Button backgroundColor={color.blue} onClick={handleReScrap} disabled={isReScraping}>
                     {isReScraping ? "Re:Scraping..." : "Re:Scrap"}
                 </Button>
-                <ConfirmModal isOpen={isReScrapModalOpen} title="Confirm Re:Scrap" message="Are you sure re:scrap this?" action={actionReScrap} disabled={isReScraping} />
-                <ConfirmModal isOpen={isDelModalOpen} title="Confirm Delete" message="Are you sure delete the selected images?" action={actionDeleteImage} />
+                <ConfirmModal
+                    isOpen={isReScrapModalOpen}
+                    title="Confirm Re:Scrap"
+                    message="Are you sure re:scrap this?"
+                    action={actionReScrap}
+                    disabled={isReScraping}
+                />
+                <ConfirmModal
+                    isOpen={isDelModalOpen}
+                    title="Confirm Delete"
+                    message="Are you sure delete the selected images?"
+                    action={actionDeleteImage}
+                />
             </Card>
         </>
     );

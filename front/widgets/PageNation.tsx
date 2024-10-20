@@ -20,7 +20,11 @@ interface ItemProps {
     onClick: () => unknown;
 }
 const PageItem: FC<PropsWithChildren<ItemProps>> = ({ children, onClick, txt, current = false }) => (
-    <button onClick={onClick} style={current ? { ...PageItemStyle, ...activeItemStyle } : PageItemStyle} disabled={current}>
+    <button
+        onClick={onClick}
+        style={current ? { ...PageItemStyle, ...activeItemStyle } : PageItemStyle}
+        disabled={current}
+    >
         {txt ?? children}
     </button>
 );
@@ -36,7 +40,10 @@ export const PageNation: FC<PageProps> = ({ totalPage, visiblePage, current, set
     const margin = useMemo(() => Math.ceil(visiblePage / 2), [visiblePage]);
     const startNum = useMemo(() => Math.max(1, current - margin), [current, margin]);
 
-    const pageList = useMemo(() => Array.from({ length: Math.min(visiblePage, totalPage) }, (_, idx) => idx + startNum), [visiblePage, startNum, totalPage]);
+    const pageList = useMemo(
+        () => Array.from({ length: Math.min(visiblePage, totalPage) }, (_, idx) => idx + startNum),
+        [visiblePage, startNum, totalPage]
+    );
 
     const lastPage = useMemo(() => pageList.at(-1) ?? totalPage, [pageList, totalPage]);
     const changePage = (page: number) => page !== current && setPage(page);
