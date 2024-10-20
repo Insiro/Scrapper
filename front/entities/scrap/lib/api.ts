@@ -14,21 +14,13 @@ export const getScrapList = async ({ page = 1, pined = false }: { page?: number;
 
 export const getScrap = async (scrapId: number | string | undefined) => {
     if (scrapId === undefined) return null;
-    try {
-        const response = await api.get<Scrap>(`/scraps/${scrapId}`);
-        return response.data;
-    } catch {
-        return undefined;
-    }
+    const response = await api.get<Scrap>(`/scraps/${scrapId}`);
+    return response.data;
 };
 
 export const createScrap = async (url: string) => {
-    try {
-        const response = await api.post<Scrap>("/scraps", { url });
-        return response.data;
-    } catch {
-        return undefined;
-    }
+    const response = await api.post<Scrap>("/scraps", { url });
+    return response.data;
 };
 
 export const reScrap = async (id: number) => {

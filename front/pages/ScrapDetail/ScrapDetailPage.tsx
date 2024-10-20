@@ -14,9 +14,13 @@ export const ScrapDetailPage: React.FC = () => {
     const navigate = useNavigate();
     const refreshScrap = async () => {
         if (scrapId === undefined) return navigate("404");
-        const sc = await scrapApi.getScrap(parseInt(scrapId));
-        if (sc === null) return navigate("404");
-        setScrap(sc);
+        try {
+            const sc = await scrapApi.getScrap(parseInt(scrapId));
+            if (sc === null) return navigate("404");
+            setScrap(sc);
+        } catch {
+            return navigate("404");
+        }
     };
     useEffect(() => setPageTitle("Scrap Detail"), [setPageTitle]); // 페이지가 로드될 때 제목 설정
 
