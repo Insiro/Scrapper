@@ -8,7 +8,7 @@ export const getScrapList = async ({ page = 1, pined = false }: { page?: number;
         const response = await api.get<{ list: Scrap[]; count: number }>("scraps", { params });
         return response.data;
     } catch {
-        return {};
+        return { list: [], count: 0 };
     }
 };
 
