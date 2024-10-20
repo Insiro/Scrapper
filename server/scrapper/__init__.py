@@ -30,6 +30,7 @@ class Scrapper(AbsScrapper):
             case PageType.hoyolab:
                 self.instance = ImplHoyolab()
             case PageType.hoyoLink:
+                self.pageType = PageType.hoyolab
                 self.instance = ImplHoyoLink()
             case PageType.instagram:
                 self.instance = ImplInsta()
