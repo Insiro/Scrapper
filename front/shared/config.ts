@@ -1,22 +1,20 @@
 let basePath = import.meta.env.SCRAPER_BASE_PATH || "";
-if (basePath === "/") basePath = ""
-const apiHost = import.meta.env.SCRAPER_API_HOST || "";
+if (basePath === "/") basePath = "";
+else if (basePath[0] === "/") basePath = basePath.slice(1);
 
-let hostPath: string
+const { hostname, protocol } = window.location;
 
+const apiHost = import.meta.env.SCRAPER_API_HOST || protocol + "//" + hostname;
 
+let hostPath: string;
 if (apiHost) {
-    const apiPort = import.meta.env.SCRAPER_API_PORT || 80;
-    console.log(import.meta.env.SCRAPER_API_PORT)
-    const apiPath = `${apiHost}:${apiPort}`
-    hostPath = basePath ? (new URL(basePath, apiPath)).href : apiPath
-} else hostPath = basePath
+    hostPath = basePath ? new URL(basePath, apiHost).href : apiHost;
+} else hostPath = basePath;
 
 const Config = {
     basePath,
     apiHost,
     hostPath,
 };
-console.log(Config)
-console.log(import.meta.env)
-export default Config
+
+export default Config;
