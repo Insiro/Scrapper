@@ -23,6 +23,7 @@ class Scrapper(AbsScrapper):
                 type = PageType.from_str(urlsplit(url).hostname)
             else:
                 type = PageType[type_name]
+        self.pageType = type
         match type:
             case PageType.twitter:
                 self.instance = ImplTwitter()

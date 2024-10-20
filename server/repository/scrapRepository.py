@@ -59,7 +59,7 @@ class ScrapRepository:
         return scrap
 
     def get_scrap_by_url(self, pageType: PageType, source_id) -> Optional[Scrap]:
-        return self.db.query(Scrap).filter_by(source_id=source_id, source=pageType).first()
+        return self.db.query(Scrap).filter_by(source_id=source_id, source=pageType.value).first()
 
     def get_scraps(self, offset: int = 0, limit: int = 20, pined=False) -> List[Scrap]:
         query = self.db.query(Scrap).outerjoin(Tags)
