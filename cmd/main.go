@@ -2,23 +2,25 @@ package main
 
 import (
 	"Scrapper/internal/routes"
-	"fmt"
+	"Scrapper/internal/util"
+	"Scrapper/pkg/out"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"os"
 )
 
 func main() {
 	app := gin.Default()
 	godotenv.Load()
 
-	basePath := os.Getenv("SCRAPER_BASE_PATH")
+	config := util.NewConfig()
+	out.Table(config, "config")
+
+	var basePath = config.BaseURL
 	if basePath == "" {
 		basePath = "/"
 	} else if basePath[0] != '/' {
 		basePath = "/" + basePath
 	}
-	fmt.Print(basePath)
 	route := app.Group(basePath)
 
 	routes.ApiRoute(route)
@@ -30,5 +32,5 @@ func main() {
 	//		c.File("./dist/index.html")
 	//	})
 	app.Run(":9000")
-	
+
 }
