@@ -1,13 +1,13 @@
 package loader
 
 import (
-    "Scrapper/internal/model"
+    "Scrapper/internal/model/entity"
     "fmt"
     "gorm.io/gorm"
 )
 
 func Migrate(db *gorm.DB) {
-    if err := db.AutoMigrate(&model.Scrap{}, &model.Image{}, &model.Exporter{}, &model.Tag{}); err != nil {
+    if err := db.AutoMigrate(&entity.Scrap{}, &entity.Image{}, &entity.Exporter{}, &entity.Tag{}); err != nil {
         fmt.Println("Migration failed")
         panic(err)
     }
