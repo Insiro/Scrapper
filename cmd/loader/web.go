@@ -1,14 +1,15 @@
 package loader
 
 import (
-    "Scrapper/internal/routes"
+    "Scrapper/internal/app"
     "Scrapper/internal/util"
     "Scrapper/pkg/out"
     "github.com/gin-gonic/gin"
+    "strings"
 )
 
 func Web(config *util.Config) {
-    app := gin.Default()
+    g := gin.Default()
 
     out.Table(config, "config")
 
@@ -18,17 +19,25 @@ func Web(config *util.Config) {
     } else if basePath[0] != '/' {
         basePath = "/" + basePath
     }
-    route := app.Group(basePath)
+    route := g.Group(basePath)
 
-    routes.ApiRoute(route)
+    app.ApiRoute(route)
 
+    route.StaticFile("", "./dist/index.html")
     route.StaticFile("/", "./dist/index.html")
     route.Static("/assets", "./dist/assets")
 
-    //	app.NoRoute(func(c *gin.Context) {
-    //		c.File("./dist/index.html")
-    //	})
-    err := app.Run(":9000")
+    // NoRoute 핸들러를 사용해 정의되지 않은 모든 경로에 대해 index.html을 반환
+    g.NoRoute(func(c *gin.Context) {
+        subRoute := strings.TrimPrefix(c.Request.URL.Path, basePath)
+        if subRoute == "/api" || subRoute == "/static" {
+            c.String(404, "Not Found")
+            return
+        }
+        c.File("./dist/index.html")
+    })
+
+    err := g.Run(":9000")
     if err != nil {
         panic(err)
     }
