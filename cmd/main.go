@@ -1,36 +1,25 @@
 package main
 
 import (
-	"Scrapper/internal/routes"
+	"Scrapper/cmd/loader"
 	"Scrapper/internal/util"
-	"Scrapper/pkg/out"
-	"github.com/gin-gonic/gin"
+	"fmt"
 	"github.com/joho/godotenv"
+	"os"
+	"strings"
 )
 
 func main() {
-	app := gin.Default()
-	godotenv.Load()
-
-	config := util.NewConfig()
-	out.Table(config, "config")
-
-	var basePath = config.BaseURL
-	if basePath == "" {
-		basePath = "/"
-	} else if basePath[0] != '/' {
-		basePath = "/" + basePath
+	fmt.Print(os.Args)
+	_ = godotenv.Load(".env")
+	config := util.InitConfig()
+	db := util.InitDB(config)
+	if len(os.Args) > 1 {
+		switch strings.ToLower(os.Args[0]) {
+		case "migrate":
+			loader.Migrate(db)
+		}
 	}
-	route := app.Group(basePath)
-
-	routes.ApiRoute(route)
-
-	route.StaticFile("/", "./dist/index.html")
-	route.Static("/assets", "./dist/assets")
-
-	//	app.NoRoute(func(c *gin.Context) {
-	//		c.File("./dist/index.html")
-	//	})
-	app.Run(":9000")
+	loader.Web(config)
 
 }

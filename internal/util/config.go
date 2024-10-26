@@ -20,7 +20,7 @@ type Config struct {
 	BaseURL    string
 }
 
-func NewConfig() *Config {
+func InitConfig() *Config {
 	// 기본 경로 설정
 	storage := getEnv("SCRAPER_STORAGE", "./storage")
 	media := filepath.Join(storage, "media")

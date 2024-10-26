@@ -7,6 +7,10 @@
         {
             "type": "add",
             "pluginName": "fleet.javascript.ai"
+        },
+        {
+            "type": "add",
+            "pluginName": "fleet.prettier"
         }
     ]
 }
