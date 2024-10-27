@@ -37,7 +37,7 @@ func InitConfig() *Config {
 	// 데이터베이스 URL 생성
 	var dbURL string
 	if dbDriver == "sqlite" {
-		dbURL = "sqlite:///" + filepath.Join(storage, dbName)
+		dbURL = filepath.Join(storage, dbName)
 	} else {
 		dbURL = fmt.Sprintf("%s://%s:%s@%s:%s/%s", dbDriver, dbUsername, dbPassword, dbHost, dbPort, dbName)
 	}
