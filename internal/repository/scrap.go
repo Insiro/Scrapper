@@ -11,29 +11,6 @@ type ScrapRepository struct {
 	db *gorm.DB
 }
 
-func (r *ScrapRepository) PutTag(scrapId uint, tagList []string, tx ...*gorm.DB) error {
-	internal := len(tx) == 0
-	var con *gorm.DB
-	if internal {
-		con = r.db.Begin()
-	} else {
-		con = tx[0]
-	}
-	tags := make([]entity.Tag, len(tagList))
-	for i, v := range tagList {
-		tags[i] = entity.Tag{Name: v, ScrapID: scrapId}
-	}
-	con = con.Delete(&entity.Tag{ScrapID: scrapId}).CreateInBatches(tags, len(tags))
-	if internal {
-		con = con.Commit()
-		err := con.Error
-		if con.Error != nil {
-			con.Rollback()
-			return err
-		}
-	}
-	return nil
-}
 func (r *ScrapRepository) Create(scrapData dto.ScrapCreate) (entity.Scrap, error) {
 	scrap := entity.Scrap{
 		SourceID:   scrapData.SourceKey,
@@ -130,4 +107,42 @@ func (r *ScrapRepository) DeleteScrap(scrapId uint) error {
 		tx.Rollback()
 	}
 	return tx.Error
+}
+
+func (r *ScrapRepository) PutTag(scrapId uint, tagList []string, tx ...*gorm.DB) error {
+	internal := len(tx) == 0
+	var con *gorm.DB
+	if internal {
+		con = r.db.Begin()
+	} else {
+		con = tx[0]
+	}
+	tags := make([]entity.Tag, len(tagList))
+	for i, v := range tagList {
+		tags[i] = entity.Tag{Name: v, ScrapID: scrapId}
+	}
+	con = con.Delete(&entity.Tag{ScrapID: scrapId}).CreateInBatches(tags, len(tags))
+	if internal {
+		con = con.Commit()
+		err := con.Error
+		if con.Error != nil {
+			con.Rollback()
+			return err
+		}
+	}
+	return nil
+}
+
+func (r *ScrapRepository) getTags(scrapId uint, tagName string) ([]entity.Tag, error) {
+	tx := r.db
+	if scrapId != 0 {
+		tx = tx.Where("scrap_id = ?", scrapId)
+	}
+	if tagName != "" {
+		tx = tx.Where("tagName = ?", tagName)
+	}
+	var tags []entity.Tag
+	result := tx.Find(&entity.Tag{}, tags)
+
+	return tags, result.Error
 }

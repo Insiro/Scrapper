@@ -5,7 +5,7 @@ import "Scrapper/internal/model/entity"
 type CreateExporter struct {
 	Title    string
 	Mode     entity.ExportMode
-	NameRule *string
+	NameRule string
 }
 type UpdateExporter struct {
 	Id       int
