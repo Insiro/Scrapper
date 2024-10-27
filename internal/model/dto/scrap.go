@@ -31,6 +31,19 @@ type ScrapUpdate struct {
     NewImages    []int
 }
 
+func Create2Update(create ScrapCreate) ScrapUpdate {
+    return ScrapUpdate{
+        ScrapModifier: ScrapModifier{
+            Content:    create.Content,
+            AuthorName: create.AuthorName,
+            AuthorTag:  create.AuthorTag,
+            Pin:        create.Pin,
+            Comment:    create.Comment,
+            Tags:       create.Tags,
+        },
+    }
+}
+
 type ScrapResponse struct {
     Id         uint
     Source     pageType.PageType

@@ -17,3 +17,6 @@ type Scrap struct {
 func (Scrap) TableName() string {
     return "scraps"
 }
+func (sc *Scrap) Url() string {
+    return sc.Source.Url(sc.SourceID)
+}

@@ -133,7 +133,7 @@ func (r *ScrapRepository) PutTag(scrapId uint, tagList []string, tx ...*gorm.DB)
 	return nil
 }
 
-func (r *ScrapRepository) getTags(scrapId uint, tagName string) ([]entity.Tag, error) {
+func (r *ScrapRepository) GetTags(scrapId uint, tagName string) ([]entity.Tag, error) {
 	tx := r.db
 	if scrapId != 0 {
 		tx = tx.Where("scrap_id = ?", scrapId)
