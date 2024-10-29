@@ -11,7 +11,11 @@ type ExporterController struct {
 	repo repository.ExporterRepository
 }
 
-func (r *ExporterController) Create(c *gin.Context, input dto.CreateExporter) *gin.Error {
+func (r *ExporterController) Create(c *gin.Context) *gin.Error {
+	var input = dto.CreateExporter{}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		return c.Error(err)
+	}
 	exporter, err := r.repo.Create(input)
 	if err != nil {
 		return c.Error(err)
@@ -21,7 +25,12 @@ func (r *ExporterController) Create(c *gin.Context, input dto.CreateExporter) *g
 	return nil
 }
 
-func (r *ExporterController) Update(c *gin.Context, input dto.UpdateExporter) *gin.Error {
+func (r *ExporterController) Update(c *gin.Context) *gin.Error {
+
+	var input = dto.UpdateExporter{}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		return c.Error(err)
+	}
 	found, err := r.repo.Get(input.Id, "")
 	if err != nil {
 		return c.Error(err)
@@ -35,7 +44,11 @@ func (r *ExporterController) Update(c *gin.Context, input dto.UpdateExporter) *g
 	return nil
 }
 
-func (r *ExporterController) List(c *gin.Context, input dto.SelectExporter) *gin.Error {
+func (r *ExporterController) List(c *gin.Context) *gin.Error {
+	var input = dto.SelectExporter{}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		return c.Error(err)
+	}
 	found, err := r.repo.Get(input.Id, input.Title)
 	if err != nil {
 		return c.Error(err)
@@ -43,4 +56,8 @@ func (r *ExporterController) List(c *gin.Context, input dto.SelectExporter) *gin
 
 	c.JSON(http.StatusOK, found)
 	return nil
+}
+
+func (r *ExporterController) Init(group *gin.RouterGroup) {
+
 }

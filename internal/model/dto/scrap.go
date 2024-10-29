@@ -9,6 +9,12 @@ type URLInput struct {
     Url string
 }
 
+type ListScrap struct {
+    Offset int  `form:"offset,default=0"`
+    Limit  int  `form:"offset,default=20"`
+    Pined  bool `form:"pined,default=false"`
+}
+
 type ScrapModifier struct {
     Content    *string
     AuthorName string
@@ -45,7 +51,7 @@ func Create2Update(create ScrapCreate) ScrapUpdate {
 }
 
 type ScrapResponse struct {
-    Id         uint
+    Id         int
     Source     pageType.PageType
     SourceId   string
     Url        string

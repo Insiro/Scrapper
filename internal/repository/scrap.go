@@ -11,6 +11,10 @@ type ScrapRepository struct {
 	db *gorm.DB
 }
 
+func NewScrapRepository(db *gorm.DB) ScrapRepository {
+	return ScrapRepository{db}
+}
+
 func (r *ScrapRepository) Create(scrapData dto.ScrapCreate) (entity.Scrap, error) {
 	scrap := entity.Scrap{
 		SourceID:   scrapData.SourceKey,
@@ -72,7 +76,7 @@ func (r *ScrapRepository) GetBySourceId(pageType pageType.PageType, sourceId str
 	return scrap, nil
 }
 
-func (r *ScrapRepository) GetScrap(scrapId uint) (entity.Scrap, error) {
+func (r *ScrapRepository) GetScrap(scrapId int) (entity.Scrap, error) {
 	var scrap entity.Scrap
 	result := r.db.Take(&scrap, scrapId)
 	if result.Error != nil {
@@ -98,7 +102,7 @@ func (r *ScrapRepository) CountScrap() (int64, error) {
 	return count, result.Error
 }
 
-func (r *ScrapRepository) DeleteScrap(scrapId uint) error {
+func (r *ScrapRepository) DeleteScrap(scrapId int) error {
 	tx := r.db.Begin()
 	tx = tx.Delete(&entity.Scrap{}, scrapId)
 	tx = tx.Where("scrap_id = ?", scrapId).Delete(&entity.Image{})
@@ -109,7 +113,7 @@ func (r *ScrapRepository) DeleteScrap(scrapId uint) error {
 	return tx.Error
 }
 
-func (r *ScrapRepository) PutTag(scrapId uint, tagList []string, tx ...*gorm.DB) error {
+func (r *ScrapRepository) PutTag(scrapId int, tagList []string, tx ...*gorm.DB) error {
 	internal := len(tx) == 0
 	var con *gorm.DB
 	if internal {
@@ -133,7 +137,7 @@ func (r *ScrapRepository) PutTag(scrapId uint, tagList []string, tx ...*gorm.DB)
 	return nil
 }
 
-func (r *ScrapRepository) GetTags(scrapId uint, tagName string) ([]entity.Tag, error) {
+func (r *ScrapRepository) GetTags(scrapId int, tagName string) ([]entity.Tag, error) {
 	tx := r.db
 	if scrapId != 0 {
 		tx = tx.Where("scrap_id = ?", scrapId)

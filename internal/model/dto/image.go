@@ -1,10 +1,10 @@
 package dto
 
 type ImageDelete struct {
-	Images []uint
+	Images []int
 }
 
 type ImageResponse struct {
-	Id       uint
+	Id       int
 	FileName string
 }

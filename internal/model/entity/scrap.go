@@ -3,7 +3,7 @@ package entity
 import "Scrapper/internal/model/entity/pageType"
 
 type Scrap struct {
-    ID         uint              `gorm:"primaryKey;autoIncrement;index"`
+    ID         int               `gorm:"primaryKey;autoIncrement;index"`
     Pin        bool              `gorm:"default:false;index"`
     SourceID   string            `gorm:"size:255;uniqueIndex:scraps_unique"`
     Source     pageType.PageType `gorm:"size:50;uniqueIndex:scraps_unique"`
@@ -14,7 +14,7 @@ type Scrap struct {
     Images     []Image
 }
 
-func (Scrap) TableName() string {
+func (*Scrap) TableName() string {
     return "scraps"
 }
 func (sc *Scrap) Url() string {
