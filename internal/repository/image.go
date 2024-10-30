@@ -1,25 +1,19 @@
 package repository
 
 import (
-    "Scrapper/internal/model/entity"
+    "Scrapper/internal/entity"
     "gorm.io/gorm"
     "os"
     "path"
 )
 
-type ImageRepository struct {
+type Image struct {
     db         *gorm.DB
     mediaPath  string
     exportPath string
 }
 
-func NewImageRepository(db *gorm.DB, mediaPath string, exportPath string) ImageRepository {
-    return ImageRepository{
-        db, mediaPath, exportPath,
-    }
-}
-
-func (r *ImageRepository) SaveImage(scrapId int, fileNames []string) error {
+func (r *Image) SaveImage(scrapId int, fileNames []string) error {
     images := make([]entity.Image, len(fileNames))
     for idx, v := range fileNames {
         images[idx].FileName = v
@@ -29,8 +23,8 @@ func (r *ImageRepository) SaveImage(scrapId int, fileNames []string) error {
     return result.Error
 }
 
-// delete Fetched Images
-func (r *ImageRepository) delete(images []entity.Image, tx ...*gorm.DB) error {
+// delete Fetched Image
+func (r *Image) delete(images []entity.Image, tx ...*gorm.DB) error {
     var con *gorm.DB
     if len(tx) != 0 {
         con = tx[0]
@@ -50,7 +44,7 @@ func (r *ImageRepository) delete(images []entity.Image, tx ...*gorm.DB) error {
     return con.Error
 }
 
-func (r *ImageRepository) Delete(imageId []int) error {
+func (r *Image) Delete(imageId []int) error {
 
     var images []entity.Image
 
@@ -59,21 +53,21 @@ func (r *ImageRepository) Delete(imageId []int) error {
     return err
 }
 
-func (r *ImageRepository) DeleteByScrapId(scrapId int) error {
+func (r *Image) DeleteByScrapId(scrapId int) error {
     images, err := r.getByScrapId(scrapId)
     if err != nil {
         err = r.delete(images)
     }
     return err
 }
-func (r *ImageRepository) getByScrapId(scrapId int) ([]entity.Image, error) {
+func (r *Image) getByScrapId(scrapId int) ([]entity.Image, error) {
     var images []entity.Image
 
     tx := r.db.Where(&entity.Image{ScrapID: scrapId}).Find(&images)
     return images, tx.Error
 }
 
-func (r *ImageRepository) ExportAndDelete(imageId []int) error {
+func (r *Image) ExportAndDelete(imageId []int) error {
     var images []entity.Image
 
     tx := r.db.Find(&images, imageId)

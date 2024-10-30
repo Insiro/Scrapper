@@ -1,8 +1,8 @@
 package scrapper
 
 import (
-	"Scrapper/internal/model/dto"
-	ptype "Scrapper/internal/model/entity/pageType"
+	"Scrapper/internal/dto"
+	"Scrapper/internal/entity/enum"
 	"fmt"
 	"net/url"
 )
@@ -28,16 +28,16 @@ func (f factoryStruct) Scrap(args *ScrapArgs) (dto.ScrapCreate, error) {
 	return f.Instance.Scrap(arg)
 }
 
-func Factory(urlStr string, pageType *ptype.PageType, typeName *string) (*factoryStruct, error) {
+func Factory(urlStr string, pageType *enum.PageType, typeName *string) (*factoryStruct, error) {
 	var instance Scrapper
-	var resolvedType ptype.PageType
+	var resolvedType enum.PageType
 
 	if pageType == nil {
 		if typeName == nil {
 			hostname, _ := url.Parse(urlStr)
-			resolvedType, _ = ptype.FromHost(hostname.Hostname())
+			resolvedType, _ = enum.FromHost(hostname.Hostname())
 		} else {
-			resolvedType, _ = ptype.FromHost(*typeName)
+			resolvedType, _ = enum.FromHost(*typeName)
 		}
 	} else {
 		resolvedType = *pageType
@@ -47,7 +47,7 @@ func Factory(urlStr string, pageType *ptype.PageType, typeName *string) (*factor
 	switch resolvedType {
 	//	case ptype.Twitter:
 	//		instance = &ImplTwitter{}
-	case ptype.HoyoLab:
+	case enum.HoyoLab:
 		instance = &in
 		//	case ptype.HoyoLink:
 		//		instance = &ImplHoyoLink{}

@@ -1,18 +1,18 @@
 package controller
 
 import (
-    "Scrapper/internal/model/dto"
+    "Scrapper/internal/dto"
     "Scrapper/internal/repository"
     "github.com/gin-gonic/gin"
     "net/http"
     "strconv"
 )
 
-type ImageController struct {
-    repo repository.ImageRepository
+type Image struct {
+    repo repository.Image
 }
 
-func (i *ImageController) Delete(c *gin.Context) *gin.Error {
+func (i *Image) Delete(c *gin.Context) *gin.Error {
     id, err := strconv.Atoi(c.Request.PathValue("id"))
     if err != nil {
         return c.Error(err)
@@ -25,7 +25,7 @@ func (i *ImageController) Delete(c *gin.Context) *gin.Error {
     return nil
 }
 
-func (i *ImageController) DeleteList(c *gin.Context) *gin.Error {
+func (i *Image) DeleteList(c *gin.Context) *gin.Error {
     var input = dto.ImageDelete{}
     if err := c.ShouldBindJSON(&input); err != nil {
         return c.Error(err)

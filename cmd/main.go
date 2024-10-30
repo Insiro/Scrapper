@@ -22,6 +22,6 @@ func main() {
 			loader.Migrate(db)
 		}
 	}
-	loader.Web(config)
+	loader.Web(config, db)
 
 }

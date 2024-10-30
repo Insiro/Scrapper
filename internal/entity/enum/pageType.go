@@ -1,4 +1,4 @@
-package pageType
+package enum
 
 import "errors"
 

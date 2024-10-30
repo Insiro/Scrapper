@@ -4,7 +4,7 @@ type ImageDelete struct {
 	Images []int
 }
 
-type ImageResponse struct {
+type Image struct {
 	Id       int
 	FileName string
 }

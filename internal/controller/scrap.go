@@ -1,27 +1,25 @@
 package controller
 
 import (
-    "Scrapper/internal/model/dto"
-    "Scrapper/internal/model/entity"
-    "Scrapper/internal/repository"
+    "Scrapper/internal/dto"
+    "Scrapper/internal/entity"
+    repos "Scrapper/internal/repository"
     "Scrapper/internal/scrapper"
     "github.com/gin-gonic/gin"
     "net/http"
     "strconv"
 )
 
-type ScrapController struct {
-    repo    repository.ScrapRepository
-    imgRepo repository.ImageRepository
+type Scrap struct {
+    repo    repos.Scrap
+    imgRepo repos.Image
     parent  *gin.IRouter
+    route   *gin.RouterGroup
 }
 
-func NewScrapController(repo repository.ScrapRepository, imgRepo repository.ImageRepository, parent gin.IRouter) ScrapController {
-    controller := ScrapController{repo, imgRepo, &parent}
-    return controller.Init()
-}
+var _ IController = (*Scrap)(nil)
 
-func (r *ScrapController) ParseUrl(c *gin.Context) {
+func (r *Scrap) ParseUrl(c *gin.Context) {
     var input = dto.URLInput{}
     if err := c.ShouldBindJSON(&input); err != nil {
         _ = c.Error(err)
@@ -32,7 +30,7 @@ func (r *ScrapController) ParseUrl(c *gin.Context) {
     args := scraper.Args
     exist, err := r.repo.GetBySourceId(scraper.PageType, args.Key)
     if err != nil {
-        data := dto.NewScrapResponse(exist, []entity.Tag{})
+        data := dto.NewScrap(exist, []entity.Tag{})
         c.JSON(http.StatusOK, data)
         return
     }
@@ -48,11 +46,11 @@ func (r *ScrapController) ParseUrl(c *gin.Context) {
         return
     }
 
-    c.JSON(http.StatusCreated, dto.NewScrapResponse(exist, []entity.Tag{}))
+    c.JSON(http.StatusCreated, dto.NewScrap(exist, []global.Tag{}))
     return
 }
 
-func (r *ScrapController) ReScrap(c *gin.Context) {
+func (r *Scrap) ReScrap(c *gin.Context) {
     id, err := strconv.Atoi(c.Request.PathValue("id"))
     if err != nil {
         _ = c.Error(err)
@@ -92,7 +90,7 @@ func (r *ScrapController) ReScrap(c *gin.Context) {
     return
 }
 
-func (r *ScrapController) Detail(c *gin.Context) {
+func (r *Scrap) Detail(c *gin.Context) {
     id, err := strconv.Atoi(c.Request.PathValue("id"))
     if err != nil {
         _ = c.Error(err)
@@ -104,14 +102,14 @@ func (r *ScrapController) Detail(c *gin.Context) {
         _ = c.Error(err)
         return
     }
-    //TODO: load Images
+    //TODO: load Image
     tags, _ := r.repo.GetTags(id, "")
-    c.JSON(http.StatusOK, dto.NewScrapResponse(scrap, tags))
+    c.JSON(http.StatusOK, dto.NewScrap(scrap, tags))
 
     return
 }
 
-func (r *ScrapController) List(c *gin.Context) {
+func (r *Scrap) List(c *gin.Context) {
     input := dto.ListScrap{}
 
     err := c.BindQuery(&input)
@@ -126,17 +124,17 @@ func (r *ScrapController) List(c *gin.Context) {
         _ = c.Error(err)
         return
     }
-    dtos := make([]dto.ScrapResponse, len(scraps))
+    dtos := make([]dto.Scrap, len(scraps))
     for i, scrap := range scraps {
         tag, _ := r.repo.GetTags(scrap.ID, "")
-        dtos[i] = dto.NewScrapResponse(scrap, tag)
+        dtos[i] = dto.NewScrap(scrap, tag)
     }
 
     c.JSON(http.StatusOK, gin.H{"list": dtos, "count": count})
     return
 }
 
-func (r *ScrapController) Update(c *gin.Context) {
+func (r *Scrap) Update(c *gin.Context) {
     id, err := strconv.Atoi(c.Request.PathValue("id"))
     if err != nil {
         _ = c.Error(err)
@@ -161,12 +159,12 @@ func (r *ScrapController) Update(c *gin.Context) {
     }
     tags, _ := r.repo.GetTags(id, "")
 
-    c.JSON(http.StatusOK, dto.NewScrapResponse(scrap, tags))
+    c.JSON(http.StatusOK, dto.NewScrap(scrap, tags))
     return
 
 }
 
-func (r *ScrapController) Delete(c *gin.Context) {
+func (r *Scrap) Delete(c *gin.Context) {
     id, err := strconv.Atoi(c.Request.PathValue("id"))
     if err != nil {
         _ = c.Error(err)
@@ -187,8 +185,9 @@ func (r *ScrapController) Delete(c *gin.Context) {
     return
 }
 
-func (r *ScrapController) Init() ScrapController {
+func (r *Scrap) Init() Scrap {
     var g = (*r.parent).Group("/scraps")
+    r.route = g
     g.GET("", r.List)
     g.POST("", r.ParseUrl)
     return *r

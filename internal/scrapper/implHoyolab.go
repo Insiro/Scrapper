@@ -1,8 +1,8 @@
 package scrapper
 
 import (
-	"Scrapper/internal/model/dto"
-	"Scrapper/internal/model/entity/pageType"
+	"Scrapper/internal/dto"
+	"Scrapper/internal/entity/enum"
 	"Scrapper/internal/util"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
@@ -19,7 +19,7 @@ type implHoyolab struct {
 }
 
 func NewImplHoyolab() *implHoyolab {
-	return &implHoyolab{AbsScrapper{PageType: pageType.HoyoLab}}
+	return &implHoyolab{AbsScrapper{PageType: enum.HoyoLab}}
 }
 
 var _ Scrapper = (*implHoyolab)(nil)

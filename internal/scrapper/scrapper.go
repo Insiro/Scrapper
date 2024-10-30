@@ -1,8 +1,8 @@
 package scrapper
 
 import (
-	"Scrapper/internal/model/dto"
-	"Scrapper/internal/model/entity/pageType"
+	"Scrapper/internal/dto"
+	"Scrapper/internal/entity/enum"
 	"net/url"
 	"strings"
 )
@@ -21,7 +21,7 @@ type Scrapper interface {
 }
 
 type AbsScrapper struct {
-	PageType pageType.PageType
+	PageType enum.PageType
 }
 
 func (a *AbsScrapper) PreprocessURL(rawURL string) (*url.URL, error) {

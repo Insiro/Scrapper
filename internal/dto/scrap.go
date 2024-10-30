@@ -1,8 +1,8 @@
 package dto
 
 import (
-    "Scrapper/internal/model/entity"
-    "Scrapper/internal/model/entity/pageType"
+    "Scrapper/internal/entity"
+    "Scrapper/internal/entity/enum"
 )
 
 type URLInput struct {
@@ -27,7 +27,7 @@ type ScrapModifier struct {
 type ScrapCreate struct {
     ScrapModifier
     SourceKey  string
-    Source     pageType.PageType
+    Source     enum.PageType
     ImageNames []string
 }
 
@@ -50,32 +50,32 @@ func Create2Update(create ScrapCreate) ScrapUpdate {
     }
 }
 
-type ScrapResponse struct {
+type Scrap struct {
     Id         int
-    Source     pageType.PageType
+    Source     enum.PageType
     SourceId   string
     Url        string
     Content    *string
     AuthorName string
     AuthorTag  string
     Comment    *string
-    Images     []ImageResponse
+    Images     []Image
     Pin        bool
     Tags       []string
 }
 
-func NewScrapResponse(scrap entity.Scrap, tags []entity.Tag) ScrapResponse {
+func NewScrap(scrap entity.Scrap, tags []entity.Tag) Scrap {
     tagNames := make([]string, len(tags))
     for i, tag := range tags {
         tagNames[i] = tag.Name
     }
 
-    images := make([]ImageResponse, len(scrap.Images))
+    imgList := make([]Image, len(scrap.Images))
     for i, img := range scrap.Images {
-        images[i] = ImageResponse{img.ID, img.FileName}
+        imgList[i] = Image{img.ID, img.FileName}
     }
 
-    return ScrapResponse{
+    return Scrap{
         Id:         scrap.ID,
         SourceId:   scrap.SourceID,
         Url:        scrap.Source.Url(scrap.SourceID),
@@ -83,7 +83,7 @@ func NewScrapResponse(scrap entity.Scrap, tags []entity.Tag) ScrapResponse {
         AuthorName: scrap.AuthorName,
         AuthorTag:  scrap.AuthorTag,
         Comment:    scrap.Comment,
-        Images:     images,
+        Images:     imgList,
         Source:     scrap.Source,
         Pin:        scrap.Pin,
         Tags:       tagNames,
