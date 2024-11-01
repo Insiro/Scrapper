@@ -11,6 +11,8 @@ type Scrap struct {
     db *gorm.DB
 }
 
+func ScrapRepository(db *gorm.DB) Scrap { return Scrap{db} }
+
 func (r *Scrap) Create(scrapData dto.ScrapCreate) (entity.Scrap, error) {
     scrap := entity.Scrap{
         SourceID:   scrapData.SourceKey,
@@ -20,15 +22,28 @@ func (r *Scrap) Create(scrapData dto.ScrapCreate) (entity.Scrap, error) {
         Content:    scrapData.Content,
         Comment:    scrapData.Comment,
     }
-    tx := r.db.Begin()
-    tx = tx.Create(scrap)
-    if scrapData.Tags != nil {
-        _ = r.PutTag(scrap.ID, *scrapData.Tags, tx)
-    }
-    tx = tx.Commit()
-    if tx.Error != nil {
+    tx := r.db
+    //    tx := r.db.Begin()
+
+    if err := tx.Create(&scrap).Error; err != nil {
+        // 오류 발생 시 트랜잭션을 롤백
         tx.Rollback()
+        return scrap, err
     }
+
+    if scrapData.Tags != nil {
+        if err := r.PutTag(scrap.ID, *scrapData.Tags, tx); err != nil {
+            // 오류 발생 시 트랜잭션을 롤백
+            tx.Rollback()
+            return scrap, err
+        }
+
+    }
+    //    if tx.Error != nil {
+    //        tx.Rollback()
+    //        return scrap, tx.Error
+    //    }
+    tx = tx.Commit()
 
     return scrap, tx.Error
 
@@ -65,7 +80,11 @@ func (r *Scrap) Update(scrap entity.Scrap, data dto.ScrapUpdate) (entity.Scrap, 
 
 func (r *Scrap) GetBySourceId(pageType enum.PageType, sourceId string) (entity.Scrap, error) {
     var scrap entity.Scrap
-    result := r.db.Model(entity.Scrap{Source: pageType, SourceID: sourceId}).Take(&scrap)
+    page := pageType
+    if page == enum.HoyoLink {
+        page = enum.HoyoLab
+    }
+    result := r.db.Where(entity.Scrap{Source: pageType, SourceID: sourceId}).Take(&scrap)
     if result.Error != nil {
         return scrap, result.Error
     }
@@ -82,13 +101,13 @@ func (r *Scrap) GetScrap(scrapId int) (entity.Scrap, error) {
 }
 
 func (r *Scrap) ListScrap(offset int, limit int, pined bool) ([]entity.Scrap, error) {
-
     q := r.db.Model(entity.Scrap{})
     if pined {
         q = q.Where(entity.Scrap{Pin: pined})
     }
     var scraps []entity.Scrap
     q = q.Order("id desc").Offset(offset).Limit(limit).Find(&scraps)
+    //    q := r.db.Find(&scraps)
     return scraps, q.Error
 }
 

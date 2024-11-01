@@ -5,9 +5,10 @@ import (
 	"mime"
 	"net/http"
 	"os"
+	"path"
 )
 
-func DownloadImage(url, fileName string) (string, error) {
+func DownloadImage(url, fileName string, mediaPath string) (string, error) {
 	// 1. URL에서 이미지 다운로드
 	res, err := http.Get(url)
 	if err != nil {
@@ -23,6 +24,7 @@ func DownloadImage(url, fileName string) (string, error) {
 
 	// 3. 파일 생성 및 이미지 저장
 	fname := fileName + ext
+	fname = path.Join(path.Dir(mediaPath), fname)
 	file, err := os.Create(fname)
 	if err != nil {
 		return "", err

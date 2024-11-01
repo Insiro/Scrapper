@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
 )
@@ -22,7 +23,7 @@ type Config struct {
 
 func InitConfig() *Config {
 	// 기본 경로 설정
-	storage := getEnv("SCRAPER_STORAGE", "./storage")
+	storage := getEnv("SCRAPER_STORAGE", "./storage") + "/test"
 	media := filepath.Join(storage, "media")
 	export := filepath.Join(storage, "export")
 
@@ -39,7 +40,8 @@ func InitConfig() *Config {
 	if dbDriver == "sqlite" {
 		dbURL = filepath.Join(storage, dbName)
 	} else {
-		dbURL = fmt.Sprintf("%s://%s:%s@%s:%s/%s", dbDriver, dbUsername, dbPassword, dbHost, dbPort, dbName)
+		dbURL = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", url.QueryEscape(
+			dbUsername), dbPassword, dbHost, dbPort, dbName)
 	}
 
 	// 기본 URL 설정

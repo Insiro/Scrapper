@@ -2,15 +2,19 @@ package repository
 
 import (
     "Scrapper/internal/entity"
+    "Scrapper/internal/util"
     "gorm.io/gorm"
     "os"
     "path"
 )
 
 type Image struct {
-    db         *gorm.DB
-    mediaPath  string
-    exportPath string
+    db *gorm.DB
+    util.Config
+}
+
+func ImageRepository(db *gorm.DB, config util.Config) Image {
+    return Image{db, config}
 }
 
 func (r *Image) SaveImage(scrapId int, fileNames []string) error {
@@ -35,7 +39,7 @@ func (r *Image) delete(images []entity.Image, tx ...*gorm.DB) error {
     con = con.Delete(&images)
     if con.Error != nil {
         for _, v := range images {
-            file := path.Join(r.mediaPath, v.FileName)
+            file := path.Join(r.Media, v.FileName)
             if _, err := os.Stat(file); err != nil {
                 _ = os.Remove(file)
             }
@@ -74,8 +78,8 @@ func (r *Image) ExportAndDelete(imageId []int) error {
     tx = tx.Delete(&images)
     if tx.Error != nil {
         for _, v := range images {
-            source := path.Join(r.mediaPath, v.FileName)
-            dest := path.Join(r.exportPath, v.FileName)
+            source := path.Join(r.Media, v.FileName)
+            dest := path.Join(r.Export, v.FileName)
             if _, err := os.Stat(source); err != nil {
                 _ = os.Rename(source, dest)
             }

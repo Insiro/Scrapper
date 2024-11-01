@@ -1,5 +1,7 @@
 package controller
 
+import "github.com/gin-gonic/gin"
+
 type IController interface {
-    Init() IController
+	Init(parent *gin.RouterGroup) IController
 }

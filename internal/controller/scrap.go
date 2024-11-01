@@ -5,19 +5,27 @@ import (
     "Scrapper/internal/entity"
     repos "Scrapper/internal/repository"
     "Scrapper/internal/scrapper"
-    "github.com/gin-gonic/gin"
+    "Scrapper/internal/util"
     "net/http"
     "strconv"
+
+    "github.com/gin-gonic/gin"
 )
 
 type Scrap struct {
     repo    repos.Scrap
     imgRepo repos.Image
-    parent  *gin.IRouter
     route   *gin.RouterGroup
+    util.Config
 }
 
 var _ IController = (*Scrap)(nil)
+
+func ScrapController(repo repos.Scrap, imgRepo repos.Image, parent *gin.RouterGroup, config util.Config) Scrap {
+    cont := Scrap{repo, imgRepo, nil, config}
+    cont.Init(parent)
+    return cont
+}
 
 func (r *Scrap) ParseUrl(c *gin.Context) {
     var input = dto.URLInput{}
@@ -27,31 +35,39 @@ func (r *Scrap) ParseUrl(c *gin.Context) {
     }
 
     scraper, err := scrapper.Factory(input.Url, nil, nil)
+    if err != nil {
+        _ = c.Error(err)
+        return
+    }
     args := scraper.Args
     exist, err := r.repo.GetBySourceId(scraper.PageType, args.Key)
-    if err != nil {
+    if err == nil {
         data := dto.NewScrap(exist, []entity.Tag{})
         c.JSON(http.StatusOK, data)
         return
     }
-    scrapCreate, err := scraper.Scrap(nil)
+    scrapCreate, err := scraper.Scrap(nil, r.Media)
     if err != nil {
         _ = c.Error(err)
         return
     }
     saved, err := r.repo.Create(scrapCreate)
+    if err != nil {
+        _ = c.Error(err)
+        return
+    }
     err = r.imgRepo.SaveImage(saved.ID, scrapCreate.ImageNames)
     if err != nil {
         _ = c.Error(err)
         return
     }
 
-    c.JSON(http.StatusCreated, dto.NewScrap(exist, []global.Tag{}))
+    c.JSON(http.StatusCreated, dto.NewScrap(saved, []entity.Tag{}))
     return
 }
 
 func (r *Scrap) ReScrap(c *gin.Context) {
-    id, err := strconv.Atoi(c.Request.PathValue("id"))
+    id, err := strconv.Atoi(c.Param("id"))
     if err != nil {
         _ = c.Error(err)
         return
@@ -63,7 +79,7 @@ func (r *Scrap) ReScrap(c *gin.Context) {
         return
     }
     scr, _ := scrapper.Factory(found.Url(), &found.Source, nil)
-    data, err := scr.Scrap(nil)
+    data, err := scr.Scrap(nil, r.Media)
     if err != nil {
         _ = c.Error(err)
         return
@@ -91,7 +107,7 @@ func (r *Scrap) ReScrap(c *gin.Context) {
 }
 
 func (r *Scrap) Detail(c *gin.Context) {
-    id, err := strconv.Atoi(c.Request.PathValue("id"))
+    id, err := strconv.Atoi(c.Param("id"))
     if err != nil {
         _ = c.Error(err)
         return
@@ -135,7 +151,7 @@ func (r *Scrap) List(c *gin.Context) {
 }
 
 func (r *Scrap) Update(c *gin.Context) {
-    id, err := strconv.Atoi(c.Request.PathValue("id"))
+    id, err := strconv.Atoi(c.Param("id"))
     if err != nil {
         _ = c.Error(err)
         return
@@ -165,7 +181,7 @@ func (r *Scrap) Update(c *gin.Context) {
 }
 
 func (r *Scrap) Delete(c *gin.Context) {
-    id, err := strconv.Atoi(c.Request.PathValue("id"))
+    id, err := strconv.Atoi(c.Param("id"))
     if err != nil {
         _ = c.Error(err)
         return
@@ -185,10 +201,15 @@ func (r *Scrap) Delete(c *gin.Context) {
     return
 }
 
-func (r *Scrap) Init() Scrap {
-    var g = (*r.parent).Group("/scraps")
+func (r *Scrap) Init(parent *gin.RouterGroup) IController {
+    var g = parent.Group("/scraps")
     r.route = g
     g.GET("", r.List)
     g.POST("", r.ParseUrl)
-    return *r
+
+    g.GET(":id", r.Detail)
+    g.POST(":id", r.ReScrap)
+    g.PATCH(":id", r.Update)
+
+    return r
 }

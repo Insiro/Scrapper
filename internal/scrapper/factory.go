@@ -16,16 +16,16 @@ type factoryStruct struct {
 
 var _ Scrapper = (*factoryStruct)(nil)
 
-func (f factoryStruct) PreprocessURL(rawURL string) (*url.URL, error) {
+func (f *factoryStruct) PreprocessURL(rawURL string) (*url.URL, error) {
 	return f.Instance.PreprocessURL(rawURL)
 }
 
-func (f factoryStruct) Scrap(args *ScrapArgs) (dto.ScrapCreate, error) {
+func (f *factoryStruct) Scrap(args *ScrapArgs, mediaPath string) (dto.ScrapCreate, error) {
 	arg := args
 	if args == nil {
 		arg = &f.Args
 	}
-	return f.Instance.Scrap(arg)
+	return f.Instance.Scrap(arg, mediaPath)
 }
 
 func Factory(urlStr string, pageType *enum.PageType, typeName *string) (*factoryStruct, error) {
@@ -42,13 +42,15 @@ func Factory(urlStr string, pageType *enum.PageType, typeName *string) (*factory
 	} else {
 		resolvedType = *pageType
 	}
-	scrapper := AbsScrapper{resolvedType}
-	in := implHoyolab{scrapper}
+	base := AbsScrapper{resolvedType}
 	switch resolvedType {
 	//	case ptype.Twitter:
 	//		instance = &ImplTwitter{}
 	case enum.HoyoLab:
-		instance = &in
+		instance = &implHoyolab{base}
+	case enum.HoyoLink:
+		resolvedType = enum.HoyoLab
+		instance = &implHoyolink{implHoyolab{AbsScrapper{enum.HoyoLab}}}
 		//	case ptype.HoyoLink:
 		//		instance = &ImplHoyoLink{}
 		//	case ptype.Instagram:
@@ -65,8 +67,9 @@ func Factory(urlStr string, pageType *enum.PageType, typeName *string) (*factory
 	args := instance.GenArgs(processedURL)
 
 	return &factoryStruct{
-		Instance: instance,
-		Url:      processedURL,
-		Args:     args,
+		AbsScrapper: AbsScrapper{resolvedType},
+		Instance:    instance,
+		Url:         processedURL,
+		Args:        args,
 	}, nil
 }
