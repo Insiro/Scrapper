@@ -1,6 +1,7 @@
 package scrapper
 
 import (
+    "Scrapper/internal/app"
     "Scrapper/internal/dto"
     "Scrapper/internal/entity/enum"
     "net/url"
@@ -17,16 +18,17 @@ type Scrapper interface {
     GenArgs(parsedURL *url.URL) ScrapArgs
     MergeURL(parsedURL *url.URL) string
     createScrap(authorTag, authorName, sourceKey, content string, imageNames []string) dto.ScrapCreate
-    Scrap(args *ScrapArgs, mediaPath string) (dto.ScrapCreate, error)
+    Scrap(args *ScrapArgs) (dto.ScrapCreate, error)
 }
 
 type AbsScrapper struct {
     PageType enum.PageType
+    config   *app.Config
 }
 
 var _ Scrapper = (*AbsScrapper)(nil)
 
-func (a *AbsScrapper) Scrap(_ *ScrapArgs, _ string) (dto.ScrapCreate, error) {
+func (a *AbsScrapper) Scrap(_ *ScrapArgs) (dto.ScrapCreate, error) {
     //TODO implement me
     panic("not implemented args")
 }

@@ -4,6 +4,7 @@ import (
     "Scrapper/internal/app"
     "Scrapper/internal/controller"
     "Scrapper/internal/repository"
+    "Scrapper/internal/service"
     "Scrapper/pkg/out"
     "fmt"
     "strings"
@@ -26,7 +27,8 @@ func Web(config *app.Config, db *gorm.DB) {
     apiRoute := app.ApiRoute(route)
 
     imgRepo := repository.ImageRepository(db, *config)
-    controller.ScrapController(repository.ScrapRepository(db), imgRepo, apiRoute, *config)
+    scrapService := service.ScrapService(repository.ScrapRepository(db), imgRepo, config)
+    controller.ScrapController(scrapService, apiRoute)
     controller.ImageController(imgRepo, apiRoute, *config)
 
     route.StaticFile("", "./dist/index.html")

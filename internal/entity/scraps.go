@@ -12,6 +12,7 @@ type Scrap struct {
     AuthorTag  string        `gorm:"size:100"`
     Comment    *string       `gorm:"size:255"`
     Images     []Image
+    Tags       []Tag
 }
 
 func (*Scrap) TableName() string {

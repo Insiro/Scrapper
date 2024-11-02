@@ -1,8 +1,8 @@
 package repository
 
 import (
+    "Scrapper/internal/app"
     "Scrapper/internal/entity"
-    "Scrapper/internal/util"
     "gorm.io/gorm"
     "os"
     "path"
@@ -10,10 +10,10 @@ import (
 
 type Image struct {
     db *gorm.DB
-    util.Config
+    app.Config
 }
 
-func ImageRepository(db *gorm.DB, config util.Config) Image {
+func ImageRepository(db *gorm.DB, config app.Config) Image {
     return Image{db, config}
 }
 

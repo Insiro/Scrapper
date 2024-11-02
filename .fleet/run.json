@@ -2,7 +2,7 @@
     "configurations": [
         {
             "type": "go",
-            "name": "Go configuration",
+            "name": "go Scrap",
             "workingDir": "$PROJECT_DIR$",
             "goExecPath": "go",
             "environment": {
@@ -10,7 +10,22 @@
             },
             "buildParams": [
                 "$PROJECT_DIR$/cmd/main.go"
-            ]
+            ],
+            "runParams": [
+                "scrap"
+            ],
+        },
+        {
+            "type": "go",
+            "name": "start Scrapper",
+            "workingDir": "$PROJECT_DIR$",
+            "goExecPath": "go",
+            "environment": {
+                "TEMP_DIR": "/Users/.temp/",
+            },
+            "buildParams": [
+                "$PROJECT_DIR$/cmd/main.go"
+            ],
         }
     ]
 }

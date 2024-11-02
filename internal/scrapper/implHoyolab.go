@@ -33,7 +33,7 @@ func (h *implHoyolab) GenArgs(parsedURL *url.URL) ScrapArgs {
     return args
 }
 
-func (h *implHoyolab) Scrap(args *ScrapArgs, mediaPath string) (dto.ScrapCreate, error) {
+func (h *implHoyolab) Scrap(args *ScrapArgs) (dto.ScrapCreate, error) {
     apiPath := fmt.Sprintf("https://bbs-api-os.hoyolab.com/community/post/wapi/getPostFull?post_id=%s", args.Key)
     req, err := http.NewRequest("GET", apiPath, nil)
     if err != nil {
@@ -76,7 +76,7 @@ func (h *implHoyolab) Scrap(args *ScrapArgs, mediaPath string) (dto.ScrapCreate,
     var fnameList []string
     for _, img := range imgList {
         uid := uuid.New()
-        fname, err := util.DownloadImage(fmt.Sprint(img), uid.String(), mediaPath)
+        fname, err := util.DownloadImage(fmt.Sprint(img), uid.String(), h.config)
         if err == nil {
             fnameList = append(fnameList, fmt.Sprintf(fname))
         }

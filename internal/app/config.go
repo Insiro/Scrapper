@@ -19,6 +19,9 @@ type Config struct {
 	DBPort     string
 	DBURL      string
 	BaseURL    string
+
+	ImageWithThr   int
+	ImageHeightThr int
 }
 
 func InitConfig() *Config {
@@ -52,17 +55,19 @@ func InitConfig() *Config {
 
 	// Config 구조체 생성
 	config := &Config{
-		Storage:    storage,
-		Media:      media,
-		Export:     export,
-		DBDriver:   dbDriver,
-		DBName:     dbName,
-		DBPassword: dbPassword,
-		DBUsername: dbUsername,
-		DBHost:     dbHost,
-		DBPort:     dbPort,
-		DBURL:      dbURL,
-		BaseURL:    baseURL,
+		Storage:        storage,
+		Media:          media,
+		Export:         export,
+		DBDriver:       dbDriver,
+		DBName:         dbName,
+		DBPassword:     dbPassword,
+		DBUsername:     dbUsername,
+		DBHost:         dbHost,
+		DBPort:         dbPort,
+		DBURL:          dbURL,
+		BaseURL:        baseURL,
+		ImageHeightThr: 200,
+		ImageWithThr:   200,
 	}
 
 	return config

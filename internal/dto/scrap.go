@@ -64,7 +64,7 @@ type Scrap struct {
     Tags       []string
 }
 
-func NewScrap(scrap entity.Scrap, tags []entity.Tag) Scrap {
+func NewScrap(scrap *entity.Scrap, tags []entity.Tag) Scrap {
     tagNames := make([]string, len(tags))
     for i, tag := range tags {
         tagNames[i] = tag.Name

@@ -1,6 +1,7 @@
 package scrapper
 
 import (
+	"Scrapper/internal/app"
 	"Scrapper/internal/dto"
 	"Scrapper/internal/entity/enum"
 	"fmt"
@@ -20,15 +21,15 @@ func (f *factoryStruct) PreprocessURL(rawURL string) (*url.URL, error) {
 	return f.Instance.PreprocessURL(rawURL)
 }
 
-func (f *factoryStruct) Scrap(args *ScrapArgs, mediaPath string) (dto.ScrapCreate, error) {
+func (f *factoryStruct) Scrap(args *ScrapArgs) (dto.ScrapCreate, error) {
 	arg := args
 	if args == nil {
 		arg = &f.Args
 	}
-	return f.Instance.Scrap(arg, mediaPath)
+	return f.Instance.Scrap(arg)
 }
 
-func Factory(urlStr string, pageType *enum.PageType, typeName *string) (*factoryStruct, error) {
+func Factory(urlStr string, pageType *enum.PageType, typeName *string, config *app.Config) (*factoryStruct, error) {
 	var instance Scrapper
 	var resolvedType enum.PageType
 
@@ -42,17 +43,15 @@ func Factory(urlStr string, pageType *enum.PageType, typeName *string) (*factory
 	} else {
 		resolvedType = *pageType
 	}
-	base := AbsScrapper{resolvedType}
+	base := AbsScrapper{resolvedType, config}
 	switch resolvedType {
-	//	case ptype.Twitter:
-	//		instance = &ImplTwitter{}
+	case enum.Twitter:
+		instance = &implTwitter{base}
 	case enum.HoyoLab:
 		instance = &implHoyolab{base}
 	case enum.HoyoLink:
-		resolvedType = enum.HoyoLab
-		instance = &implHoyolink{implHoyolab{AbsScrapper{enum.HoyoLab}}}
-		//	case ptype.HoyoLink:
-		//		instance = &ImplHoyoLink{}
+		base.PageType = enum.HoyoLab
+		instance = &implHoyolink{implHoyolab{base}}
 		//	case ptype.Instagram:
 		//		instance = &ImplInstagram{}
 	default:
@@ -67,7 +66,7 @@ func Factory(urlStr string, pageType *enum.PageType, typeName *string) (*factory
 	args := instance.GenArgs(processedURL)
 
 	return &factoryStruct{
-		AbsScrapper: AbsScrapper{resolvedType},
+		AbsScrapper: base,
 		Instance:    instance,
 		Url:         processedURL,
 		Args:        args,
