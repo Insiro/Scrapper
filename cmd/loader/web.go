@@ -7,10 +7,9 @@ import (
     "Scrapper/internal/service"
     "Scrapper/pkg/out"
     "fmt"
-    "strings"
-
     "github.com/gin-gonic/gin"
     "gorm.io/gorm"
+    "strings"
 )
 
 func Web(config *app.Config, db *gorm.DB) {
@@ -26,7 +25,7 @@ func Web(config *app.Config, db *gorm.DB) {
     route := g.Group(basePath)
     apiRoute := app.ApiRoute(route)
 
-    imgRepo := repository.ImageRepository(db, *config)
+    imgRepo := repository.ImageRepository(db, config)
     scrapService := service.ScrapService(repository.ScrapRepository(db), imgRepo, config)
     controller.ScrapController(scrapService, apiRoute)
     controller.ImageController(imgRepo, apiRoute, *config)

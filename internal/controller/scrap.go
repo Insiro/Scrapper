@@ -4,10 +4,9 @@ import (
     "Scrapper/internal/dto"
     "Scrapper/internal/entity"
     "Scrapper/internal/service"
+    "github.com/gin-gonic/gin"
     "net/http"
     "strconv"
-
-    "github.com/gin-gonic/gin"
 )
 
 type Scrap struct {

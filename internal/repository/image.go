@@ -9,11 +9,11 @@ import (
 )
 
 type Image struct {
-    db *gorm.DB
-    app.Config
+    db     *gorm.DB
+    config *app.Config
 }
 
-func ImageRepository(db *gorm.DB, config app.Config) Image {
+func ImageRepository(db *gorm.DB, config *app.Config) Image {
     return Image{db, config}
 }
 
@@ -39,7 +39,7 @@ func (r *Image) delete(images []entity.Image, tx ...*gorm.DB) error {
     con = con.Delete(&images)
     if con.Error != nil {
         for _, v := range images {
-            file := path.Join(r.Media, v.FileName)
+            file := path.Join(r.config.Media, v.FileName)
             if _, err := os.Stat(file); err != nil {
                 _ = os.Remove(file)
             }
@@ -78,8 +78,8 @@ func (r *Image) ExportAndDelete(imageId []int) error {
     tx = tx.Delete(&images)
     if tx.Error != nil {
         for _, v := range images {
-            source := path.Join(r.Media, v.FileName)
-            dest := path.Join(r.Export, v.FileName)
+            source := path.Join(r.config.Media, v.FileName)
+            dest := path.Join(r.config.Export, v.FileName)
             if _, err := os.Stat(source); err != nil {
                 _ = os.Rename(source, dest)
             }

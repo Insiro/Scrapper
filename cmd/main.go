@@ -3,9 +3,7 @@ package main
 import (
 	"Scrapper/cmd/loader"
 	"Scrapper/internal/app"
-	"Scrapper/internal/scrapper"
 	"Scrapper/pkg/out"
-	"fmt"
 	"github.com/joho/godotenv"
 	"os"
 	"strings"
@@ -13,30 +11,25 @@ import (
 
 func main() {
 	var command = ""
-	if len(os.Args) > 1 {
-		command = strings.ToLower(os.Args[1])
+	args := os.Args
+	argCount := len(args)
+
+	if argCount > 1 {
+		command = strings.ToLower(args[1])
 	}
 	_ = godotenv.Load(".env")
-	config := app.InitConfig()
 
+	config := app.InitConfig()
 	out.Table(config, "Scrapper Config")
+
 	db := app.InitDB(config)
 	switch command {
 	case "migrate":
 		loader.Migrate(db)
-		return
+		os.Exit(1)
 	case "scrap":
-		src, err := scrapper.Factory("https://x.com/CherryPie_85/status/1772978070942568837?t=a0L0kpQbeEQusZfL9vMDGQ&s=19", nil, nil, config)
-		if err != nil {
-			panic(err.Error())
-		}
-		scrap, err := src.Scrap(&src.Args)
-		if err != nil {
-			return
-		}
-		fmt.Print(scrap)
-		return
+		loader.Scrap(args[2], db, config)
+		os.Exit(1)
 	}
 	loader.Web(config, db)
-
 }
