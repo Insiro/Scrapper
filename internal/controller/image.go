@@ -1,9 +1,9 @@
 package controller
 
 import (
+    "Scrapper/internal/app"
     "Scrapper/internal/dto"
     "Scrapper/internal/repository"
-    "Scrapper/internal/util"
     "github.com/gin-gonic/gin"
     "net/http"
     "strconv"
@@ -12,10 +12,10 @@ import (
 type Image struct {
     repo   repository.Image
     route  *gin.RouterGroup
-    config util.Config
+    config app.Config
 }
 
-func ImageController(repo repository.Image, parent *gin.RouterGroup, config util.Config) Image {
+func ImageController(repo repository.Image, parent *gin.RouterGroup, config app.Config) Image {
     cont := Image{repo, nil, config}
     cont.Init(parent)
     return cont

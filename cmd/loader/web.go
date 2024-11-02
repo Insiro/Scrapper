@@ -4,7 +4,6 @@ import (
     "Scrapper/internal/app"
     "Scrapper/internal/controller"
     "Scrapper/internal/repository"
-    "Scrapper/internal/util"
     "Scrapper/pkg/out"
     "fmt"
     "strings"
@@ -13,7 +12,7 @@ import (
     "gorm.io/gorm"
 )
 
-func Web(config *util.Config, db *gorm.DB) {
+func Web(config *app.Config, db *gorm.DB) {
     g := gin.Default()
 
     out.Table(config, "config")
@@ -29,7 +28,7 @@ func Web(config *util.Config, db *gorm.DB) {
     imgRepo := repository.ImageRepository(db, *config)
     controller.ScrapController(repository.ScrapRepository(db), imgRepo, apiRoute, *config)
     controller.ImageController(imgRepo, apiRoute, *config)
-    
+
     route.StaticFile("", "./dist/index.html")
     route.StaticFile("/", "./dist/index.html")
     route.Static("/assets", "./dist/assets")

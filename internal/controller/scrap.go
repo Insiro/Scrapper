@@ -1,11 +1,11 @@
 package controller
 
 import (
+    "Scrapper/internal/app"
     "Scrapper/internal/dto"
     "Scrapper/internal/entity"
     repos "Scrapper/internal/repository"
     "Scrapper/internal/scrapper"
-    "Scrapper/internal/util"
     "net/http"
     "strconv"
 
@@ -16,12 +16,12 @@ type Scrap struct {
     repo    repos.Scrap
     imgRepo repos.Image
     route   *gin.RouterGroup
-    util.Config
+    app.Config
 }
 
 var _ IController = (*Scrap)(nil)
 
-func ScrapController(repo repos.Scrap, imgRepo repos.Image, parent *gin.RouterGroup, config util.Config) Scrap {
+func ScrapController(repo repos.Scrap, imgRepo repos.Image, parent *gin.RouterGroup, config app.Config) Scrap {
     cont := Scrap{repo, imgRepo, nil, config}
     cont.Init(parent)
     return cont

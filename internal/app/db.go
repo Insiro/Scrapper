@@ -1,4 +1,4 @@
-package util
+package app
 
 import "gorm.io/gorm"
 import "gorm.io/driver/mysql"

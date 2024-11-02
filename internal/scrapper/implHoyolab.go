@@ -2,7 +2,7 @@ package scrapper
 
 import (
     "Scrapper/internal/dto"
-    "Scrapper/internal/util"
+    "Scrapper/internal/scrapper/util"
     "errors"
     "fmt"
     "github.com/goccy/go-json"
