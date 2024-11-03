@@ -12,9 +12,9 @@ type hiject struct {
     Handler func(*rod.Hijack)
 }
 type LoaderConfig struct {
-    Headless      *bool
-    FilterRequest *bool
-    FilterImage   *bool
+    Headless      bool
+    FilterRequest bool
+    FilterImage   bool
 }
 
 type contentLoader struct {
@@ -29,15 +29,9 @@ func NewContentLoader(config *LoaderConfig) *contentLoader {
     filterImage := true
     filterRequest := true
     if config != nil {
-        if config.FilterImage != nil {
-            filterImage = *config.FilterImage
-        }
-        if config.Headless != nil {
-            headless = *config.Headless
-        }
-        if config.FilterRequest != nil {
-            filterRequest = *config.FilterRequest
-        }
+        headless = config.Headless
+        filterImage = config.FilterImage
+        filterRequest = config.FilterRequest
     }
 
     return &contentLoader{Headless: headless, FilterImage: filterImage, FilterRequest: filterRequest, hiject: make([]hiject, 0)}
@@ -82,7 +76,7 @@ func (s *contentLoader) LoadHTMLContent(url string) (string, error) {
     page.MustWaitRequestIdle()
     page.MustWaitDOMStable()
 
-    content, _ := page.MustElement(`body`).HTML()
+    content, _ := page.MustElement(`html`).HTML()
 
     return content, nil
 }

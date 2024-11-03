@@ -2,7 +2,7 @@ package service
 
 import (
     "Scrapper/internal/app"
-    "Scrapper/internal/appError"
+    //    "Scrapper/internal/appError"
     "Scrapper/internal/dto"
     "Scrapper/internal/entity"
     "Scrapper/internal/repository"
@@ -24,10 +24,10 @@ func (s *Scrap) Scrap(target string) (*entity.Scrap, error) {
     if err != nil {
         return nil, err
     }
-    args := scraper.Args
-    if exist, err := s.repo.GetBySourceId(scraper.PageType, args.Key); err == nil {
-        return &exist, appError.Duplicated{}
-    }
+    //    args := scraper.Args
+    //    if exist, err := s.repo.GetBySourceId(scraper.PageType, args.Key); err == nil {
+    //        return &exist, appError.Duplicated{}
+    //    }
 
     scrapCreate, err := scraper.Scrap(nil)
     if err != nil {

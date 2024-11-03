@@ -52,8 +52,8 @@ func Factory(urlStr string, pageType *enum.PageType, typeName *string, config *a
 	case enum.HoyoLink:
 		base.PageType = enum.HoyoLab
 		instance = &implHoyolink{implHoyolab{base}}
-		//	case ptype.Instagram:
-		//		instance = &ImplInstagram{}
+	case enum.Instagram:
+		instance = &implInsta{base}
 	default:
 		return nil, fmt.Errorf("unsupported page type")
 	}
