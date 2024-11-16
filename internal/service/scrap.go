@@ -2,21 +2,23 @@ package service
 
 import (
     "Scrapper/internal/app"
-    //    "Scrapper/internal/appError"
+    "Scrapper/internal/appError"
     "Scrapper/internal/dto"
     "Scrapper/internal/entity"
     "Scrapper/internal/repository"
     "Scrapper/internal/scrapper"
+    "Scrapper/internal/scrapper/util"
 )
 
 type Scrap struct {
     repo    repository.Scrap
     imgRepo repository.Image
     config  *app.Config
+    onScrap util.OnScrapSet
 }
 
 func ScrapService(repo repository.Scrap, imgRepo repository.Image, config *app.Config) Scrap {
-    return Scrap{repo, imgRepo, config}
+    return Scrap{repo: repo, imgRepo: imgRepo, config: config, onScrap: util.OnScrapSet{}}
 }
 
 func (s *Scrap) Scrap(target string) (*entity.Scrap, error) {
@@ -24,20 +26,26 @@ func (s *Scrap) Scrap(target string) (*entity.Scrap, error) {
     if err != nil {
         return nil, err
     }
-    //    args := scraper.Args
-    //    if exist, err := s.repo.GetBySourceId(scraper.PageType, args.Key); err == nil {
-    //        return &exist, appError.Duplicated{}
-    //    }
-
+    args := scraper.Args
+    if exist, err := s.repo.GetBySourceId(scraper.PageType, args.Key); err == nil {
+        return &exist, appError.Duplicated{}
+    }
+    processing := s.onScrap.Add(scraper.PageType, args.Key)
+    if processing != nil {
+        return nil, processing
+    }
     scrapCreate, err := scraper.Scrap(nil)
     if err != nil {
+        s.onScrap.Remove(scraper.PageType, args.Key)
         return nil, err
     }
     saved, err := s.repo.Create(scrapCreate)
     if err != nil {
+        s.onScrap.Remove(scraper.PageType, args.Key)
         return nil, err
     }
     err = s.imgRepo.SaveImage(saved.ID, scrapCreate.ImageNames)
+    s.onScrap.Remove(scraper.PageType, args.Key)
     if err != nil {
         return nil, err
     }
@@ -50,23 +58,30 @@ func (s *Scrap) ReScrap(id int) (*entity.Scrap, error) {
         return nil, err
     }
     scr, _ := scrapper.Factory(found.Url(), &found.Source, nil, s.config)
+    processing := s.onScrap.Add(scr.PageType, scr.Args.Key)
+    if processing != nil {
+        return nil, processing
+    }
     data, err := scr.Scrap(nil)
     if err != nil {
-
+        s.onScrap.Remove(scr.PageType, scr.Args.Key)
         return nil, err
     }
     updateData := dto.Create2Update(data)
 
     result, err := s.repo.Update(found, updateData)
     if err != nil {
+        s.onScrap.Remove(scr.PageType, scr.Args.Key)
         return nil, err
     }
     err = s.imgRepo.DeleteByScrapId(id)
     if err != nil {
+        s.onScrap.Remove(scr.PageType, scr.Args.Key)
         return nil, err
     }
 
     err = s.imgRepo.SaveImage(id, data.ImageNames)
+    s.onScrap.Remove(scr.PageType, scr.Args.Key)
     if err != nil {
         return nil, err
     }

@@ -12,3 +12,16 @@ func (e Duplicated) Error() string {
     }
     return *e.Message
 }
+
+type Process struct {
+    Message *string
+}
+
+var _ error = (*Process)(nil)
+
+func (e Process) Error() string {
+    if e.Message == nil {
+        return "Processing"
+    }
+    return *e.Message
+}

@@ -26,7 +26,9 @@ func (f *factoryStruct) Scrap(args *ScrapArgs) (dto.ScrapCreate, error) {
 	if args == nil {
 		arg = &f.Args
 	}
-	return f.Instance.Scrap(arg)
+	result, err := f.Instance.Scrap(arg)
+
+	return result, err
 }
 
 func Factory(urlStr string, pageType *enum.PageType, typeName *string, config *app.Config) (*factoryStruct, error) {
